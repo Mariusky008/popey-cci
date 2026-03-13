@@ -1040,8 +1040,13 @@
             opacity: 1;
         }
 
+        @keyframes pulsePhone {
+            0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(245, 158, 11, 0.7); }
+            70% { transform: scale(1.05); box-shadow: 0 0 0 20px rgba(245, 158, 11, 0); }
+            100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(245, 158, 11, 0); }
+        }
+        
         @keyframes pulseGlow {
-            0% { box-shadow: 0 0 20px rgba(132, 204, 22, 0.2); }
             50% { box-shadow: 0 0 50px rgba(132, 204, 22, 0.5); }
             100% { box-shadow: 0 0 20px rgba(132, 204, 22, 0.2); }
         }
@@ -1958,6 +1963,12 @@
             100% { filter: drop-shadow(0 0 5px rgba(245, 158, 11, 0.5)); transform: scale(1); }
         }
 
+        @keyframes pulsePhone {
+            0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(245, 158, 11, 0.7); }
+            70% { transform: scale(1.05); box-shadow: 0 0 0 20px rgba(245, 158, 11, 0); }
+            100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(245, 158, 11, 0); }
+        }
+
         @keyframes floatTicket1 {
             0%, 100% { transform: rotate(-15deg) translateX(-20px) translateY(0); }
             50% { transform: rotate(-15deg) translateX(-20px) translateY(-10px); }
@@ -2734,7 +2745,7 @@
             <div class="animate-up" style="text-align:center; margin-bottom:50px; position:relative;">
                 <div style="font-size:14px; text-transform:uppercase; letter-spacing:4px; color:#94a3b8; margin-bottom:10px;">Offre Exclusive "Founders"</div>
                 <div style="font-size:60px; font-weight:900; line-height:1; background: linear-gradient(to right, #fcd34d, #f59e0b, #fcd34d); -webkit-background-clip: text; -webkit-text-fill-color: transparent; filter: drop-shadow(0 0 15px rgba(245, 158, 11, 0.5)); animation: pulseGlow 2s infinite;">
-                    GRATUIT À VIE
+                    1 AN GRATUIT
                 </div>
                 <div style="font-size:24px; color:#e2e8f0; margin-top:10px;">
                     Si vous validez <span style="color:#fcd34d; font-weight:bold;">3 parrainages</span> en 14 jours
@@ -2744,33 +2755,19 @@
             <!-- GAMIFIED GRID -->
             <div class="grid-3" style="gap:40px; width:100%; max-width:1100px;">
                 
-                <!-- 1. LOOT: GOLDEN TICKETS -->
+                <!-- 1. LOOT: PHONE CALL -->
                 <div class="game-card" style="background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); backdrop-filter: blur(10px);">
-                    <div style="height: 120px; position: relative; display: flex; justify-content: center; align-items: center; perspective: 500px;">
-                        <!-- Ticket 1 -->
-                        <div class="ticket-anim" style="position: absolute; transform: rotate(-15deg) translateX(-20px); z-index: 1; animation: floatTicket1 3s ease-in-out infinite;">
-                            <div style="background: linear-gradient(135deg, #fcd34d, #d97706); width: 100px; height: 60px; border-radius: 5px; border: 2px dashed #78350f; display:flex; align-items:center; justify-content:center; box-shadow: 0 10px 20px rgba(0,0,0,0.5);">
-                                <i class="fas fa-ticket-alt" style="color: #78350f; font-size: 24px;"></i>
-                            </div>
-                        </div>
-                        <!-- Ticket 2 -->
-                        <div class="ticket-anim" style="position: absolute; transform: rotate(0deg) translateY(-10px); z-index: 2; animation: floatTicket2 3s ease-in-out infinite 0.5s;">
-                            <div style="background: linear-gradient(135deg, #fcd34d, #d97706); width: 100px; height: 60px; border-radius: 5px; border: 2px dashed #78350f; display:flex; align-items:center; justify-content:center; box-shadow: 0 10px 20px rgba(0,0,0,0.5);">
-                                <i class="fas fa-ticket-alt" style="color: #78350f; font-size: 24px;"></i>
-                            </div>
-                        </div>
-                        <!-- Ticket 3 -->
-                        <div class="ticket-anim" style="position: absolute; transform: rotate(15deg) translateX(20px); z-index: 3; animation: floatTicket3 3s ease-in-out infinite 1s;">
-                            <div style="background: linear-gradient(135deg, #fcd34d, #d97706); width: 100px; height: 60px; border-radius: 5px; border: 2px dashed #78350f; display:flex; align-items:center; justify-content:center; box-shadow: 0 10px 20px rgba(0,0,0,0.5);">
-                                <i class="fas fa-ticket-alt" style="color: #78350f; font-size: 24px;"></i>
-                            </div>
+                    <div style="height: 120px; position: relative; display: flex; justify-content: center; align-items: center;">
+                        <div style="position: relative; width: 100px; height: 100px; background: linear-gradient(135deg, #fcd34d, #d97706); border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 0 0 20px rgba(245, 158, 11, 0.5); animation: pulsePhone 2s infinite;">
+                            <i class="fas fa-phone-alt" style="font-size: 40px; color: #78350f;"></i>
                         </div>
                     </div>
-                    <h4 style="color:#fcd34d; font-size: 22px; margin: 10px 0;">3 Golden Tickets</h4>
-                    <p style="color:#cbd5e1; font-size: 15px;">Votre munition pour réussir.</p>
-                    <div style="background:rgba(252, 211, 77, 0.1); color:#fcd34d; padding:10px; border-radius:8px; font-size:13px; margin-top:10px; border:1px solid rgba(252, 211, 77, 0.3);">
-                        <i class="fas fa-exclamation-circle"></i> Codes uniques générés ce soir
+                    <h4 style="color:#fcd34d; font-size: 22px; margin: 10px 0;">La Hotline VIP</h4>
+                    <p style="color:#cbd5e1; font-size: 15px;">Vos filleuls appellent directement :</p>
+                    <div style="background:rgba(252, 211, 77, 0.1); color:#fcd34d; padding:10px; border-radius:8px; font-size:20px; font-weight:800; margin-top:10px; border:1px solid rgba(252, 211, 77, 0.3);">
+                        07 68 23 33 47
                     </div>
+                    <div style="font-size: 12px; color: #94a3b8; margin-top: 5px;">(Ils doivent donner VOTRE NOM)</div>
                 </div>
 
                 <!-- 2. QUEST: DEADLINE -->
