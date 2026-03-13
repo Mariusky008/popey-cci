@@ -3589,6 +3589,28 @@
             });
         }
 
+        // TRIGGER CONFETTI ON SLIDE 13 (Mission Pionnier)
+        if (currentSlideIndex === 12) { // Slide 13 is index 12
+            setTimeout(() => {
+                var count = 200;
+                var defaults = {
+                    origin: { y: 0.7 }
+                };
+
+                function fire(particleRatio, opts) {
+                    confetti(Object.assign({}, defaults, opts, {
+                        particleCount: Math.floor(count * particleRatio)
+                    }));
+                }
+
+                fire(0.25, { spread: 26, startVelocity: 55, colors: ['#fcd34d', '#fbbf24'] });
+                fire(0.2, { spread: 60, colors: ['#fcd34d', '#ffffff'] });
+                fire(0.35, { spread: 100, decay: 0.91, scalar: 0.8, colors: ['#fbbf24', '#f59e0b'] });
+                fire(0.1, { spread: 120, startVelocity: 25, decay: 0.92, scalar: 1.2, colors: ['#fcd34d'] });
+                fire(0.1, { spread: 120, startVelocity: 45, colors: ['#ffffff'] });
+            }, 800);
+        }
+
         updateProgress();
     }
 
