@@ -2753,56 +2753,74 @@
             </div>
 
             <!-- GAMIFIED GRID -->
-            <div class="grid-3" style="gap:40px; width:100%; max-width:1100px;">
+            <div class="grid-3" style="gap:30px; width:100%; max-width:1100px;">
                 
                 <!-- 1. LOOT: PHONE CALL -->
-                <div class="game-card" style="background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); backdrop-filter: blur(10px);">
-                    <div style="height: 120px; position: relative; display: flex; justify-content: center; align-items: center;">
-                        <div style="position: relative; width: 100px; height: 100px; background: linear-gradient(135deg, #fcd34d, #d97706); border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 0 0 20px rgba(245, 158, 11, 0.5); animation: pulsePhone 2s infinite;">
+                <div class="game-card" style="background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); backdrop-filter: blur(10px); padding: 30px; display: flex; flex-direction: column; align-items: center; justify-content: space-between; height: 100%;">
+                    <div style="height: 100px; width: 100px; position: relative; margin-bottom: 20px;">
+                        <div style="position: absolute; inset: 0; background: linear-gradient(135deg, #fcd34d, #d97706); border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 0 0 30px rgba(245, 158, 11, 0.4); animation: pulsePhone 2s infinite;">
                             <i class="fas fa-phone-alt" style="font-size: 40px; color: #78350f;"></i>
                         </div>
                     </div>
-                    <h4 style="color:#fcd34d; font-size: 22px; margin: 10px 0;">La Hotline VIP</h4>
-                    <p style="color:#cbd5e1; font-size: 15px;">Vos filleuls appellent directement :</p>
-                    <div style="background:rgba(252, 211, 77, 0.1); color:#fcd34d; padding:10px; border-radius:8px; font-size:20px; font-weight:800; margin-top:10px; border:1px solid rgba(252, 211, 77, 0.3);">
-                        07 68 23 33 47
+                    
+                    <div style="text-align: center; flex-grow: 1;">
+                        <h4 style="color:#fcd34d; font-size: 24px; margin: 0 0 10px 0; font-weight: 800;">La Hotline VIP</h4>
+                        <p style="color:#cbd5e1; font-size: 16px; margin: 0 0 20px 0; line-height: 1.4;">Vos filleuls appellent<br>directement ici :</p>
                     </div>
-                    <div style="font-size: 12px; color: #94a3b8; margin-top: 5px;">(Ils doivent donner VOTRE NOM)</div>
+
+                    <div style="width: 100%; text-align: center;">
+                        <div style="background:rgba(252, 211, 77, 0.1); color:#fcd34d; padding:15px; border-radius:12px; font-size:22px; font-weight:900; letter-spacing: 1px; border:1px solid rgba(252, 211, 77, 0.3); margin-bottom: 10px;">
+                            07 68 23 33 47
+                        </div>
+                        <div style="font-size: 13px; color: #94a3b8; font-style: italic;">
+                            <i class="fas fa-key"></i> Code : VOTRE NOM
+                        </div>
+                    </div>
                 </div>
 
                 <!-- 2. QUEST: DEADLINE -->
-                <div class="game-card" style="background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); backdrop-filter: blur(10px);">
-                    <div style="height: 120px; display: flex; align-items: center; justify-content: center;">
-                        <div style="position: relative; width: 120px; height: 120px;">
-                            <svg viewBox="0 0 100 100" style="transform: rotate(-90deg);">
-                                <circle cx="50" cy="50" r="45" fill="none" stroke="#334155" stroke-width="8" />
-                                <circle cx="50" cy="50" r="45" fill="none" stroke="#ef4444" stroke-width="8" stroke-dasharray="283" stroke-dashoffset="220" style="animation: fillGauge 2s ease-out forwards;"/>
-                            </svg>
-                            <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); text-align: center;">
-                                <div style="font-size: 24px; font-weight: 800; color: #ef4444;">20</div>
-                                <div style="font-size: 10px; color: #94a3b8; text-transform: uppercase;">Inscrits</div>
-                            </div>
+                <div class="game-card" style="background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); backdrop-filter: blur(10px); padding: 30px; display: flex; flex-direction: column; align-items: center; justify-content: space-between; height: 100%;">
+                    <div style="height: 100px; width: 100px; position: relative; margin-bottom: 20px;">
+                        <svg viewBox="0 0 100 100" style="transform: rotate(-90deg); width: 100%; height: 100%;">
+                            <circle cx="50" cy="50" r="45" fill="none" stroke="#334155" stroke-width="8" />
+                            <circle cx="50" cy="50" r="45" fill="none" stroke="#ef4444" stroke-width="8" stroke-dasharray="283" stroke-dashoffset="220" style="animation: fillGauge 2s ease-out forwards; filter: drop-shadow(0 0 5px #ef4444);"/>
+                        </svg>
+                        <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); text-align: center;">
+                            <div style="font-size: 28px; font-weight: 800; color: #ef4444; line-height: 1;">20</div>
+                            <div style="font-size: 9px; color: #94a3b8; text-transform: uppercase; font-weight: 700; margin-top: 2px;">Inscrits</div>
                         </div>
                     </div>
-                    <h4 style="color:#ef4444; font-size: 22px; margin: 10px 0;">Cercle Fermé</h4>
-                    <p style="color:#cbd5e1; font-size: 15px;">Fermeture à 100 membres.</p>
-                    <div style="background:rgba(239, 68, 68, 0.1); color:#ef4444; padding:10px; border-radius:8px; font-size:13px; margin-top:10px; border:1px solid rgba(239, 68, 68, 0.3);">
-                        <i class="fas fa-fire"></i> Il reste 80 places
+                    
+                    <div style="text-align: center; flex-grow: 1;">
+                        <h4 style="color:#ef4444; font-size: 24px; margin: 0 0 10px 0; font-weight: 800;">Cercle Fermé</h4>
+                        <p style="color:#cbd5e1; font-size: 16px; margin: 0 0 20px 0; line-height: 1.4;">Fermeture définitive<br>à 100 membres.</p>
+                    </div>
+
+                    <div style="width: 100%; text-align: center;">
+                        <div style="background:rgba(239, 68, 68, 0.1); color:#ef4444; padding:15px; border-radius:12px; font-size:16px; font-weight: 700; border:1px solid rgba(239, 68, 68, 0.3);">
+                            <i class="fas fa-fire-alt"></i> Il reste 80 places
+                        </div>
                     </div>
                 </div>
 
                 <!-- 3. REWARD: BADGE -->
-                <div class="game-card" style="background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); backdrop-filter: blur(10px);">
-                    <div style="height: 120px; display: flex; align-items: center; justify-content: center;">
+                <div class="game-card" style="background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); backdrop-filter: blur(10px); padding: 30px; display: flex; flex-direction: column; align-items: center; justify-content: space-between; height: 100%;">
+                    <div style="height: 100px; width: 100px; position: relative; margin-bottom: 20px; display: flex; align-items: center; justify-content: center;">
                         <div style="position: relative;">
-                            <i class="fas fa-certificate" style="font-size: 80px; color: #3b82f6; filter: drop-shadow(0 0 10px rgba(59, 130, 246, 0.6)); animation: spinSlow 10s linear infinite;"></i>
-                            <i class="fas fa-crown" style="font-size: 35px; color: white; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);"></i>
+                            <i class="fas fa-certificate" style="font-size: 90px; color: #3b82f6; filter: drop-shadow(0 0 15px rgba(59, 130, 246, 0.6)); animation: spinSlow 15s linear infinite;"></i>
+                            <i class="fas fa-crown" style="font-size: 40px; color: white; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -55%); filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));"></i>
                         </div>
                     </div>
-                    <h4 style="color:#60a5fa; font-size: 22px; margin: 10px 0;">Conseil des Sages</h4>
-                    <p style="color:#cbd5e1; font-size: 15px;">Débloquez le statut "Fondateur".</p>
-                    <div style="background:rgba(59, 130, 246, 0.1); color:#60a5fa; padding:10px; border-radius:8px; font-size:13px; margin-top:10px; border:1px solid rgba(59, 130, 246, 0.3);">
-                        <i class="fas fa-unlock"></i> Accès VIP & Roadmap
+                    
+                    <div style="text-align: center; flex-grow: 1;">
+                        <h4 style="color:#60a5fa; font-size: 24px; margin: 0 0 10px 0; font-weight: 800;">Conseil des Sages</h4>
+                        <p style="color:#cbd5e1; font-size: 16px; margin: 0 0 20px 0; line-height: 1.4;">Débloquez le statut<br>"Membre Fondateur".</p>
+                    </div>
+
+                    <div style="width: 100%; text-align: center;">
+                        <div style="background:rgba(59, 130, 246, 0.1); color:#60a5fa; padding:15px; border-radius:12px; font-size:16px; font-weight: 700; border:1px solid rgba(59, 130, 246, 0.3);">
+                            <i class="fas fa-unlock-alt"></i> Accès VIP & Roadmap
+                        </div>
                     </div>
                 </div>
 
