@@ -1947,6 +1947,34 @@
         .roulette-overlay h2 { color: #fff; text-shadow: 0 0 10px #000; } 
         .roulette-overlay p { color: #eee; text-shadow: 0 0 5px #000; }
         
+        @keyframes spinSlow {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+        
+        @keyframes pulseGlow {
+            0% { filter: drop-shadow(0 0 5px rgba(245, 158, 11, 0.5)); transform: scale(1); }
+            50% { filter: drop-shadow(0 0 20px rgba(245, 158, 11, 0.8)); transform: scale(1.05); }
+            100% { filter: drop-shadow(0 0 5px rgba(245, 158, 11, 0.5)); transform: scale(1); }
+        }
+
+        @keyframes floatTicket1 {
+            0%, 100% { transform: rotate(-15deg) translateX(-20px) translateY(0); }
+            50% { transform: rotate(-15deg) translateX(-20px) translateY(-10px); }
+        }
+        @keyframes floatTicket2 {
+            0%, 100% { transform: rotate(0deg) translateY(-10px); }
+            50% { transform: rotate(0deg) translateY(0px); }
+        }
+        @keyframes floatTicket3 {
+            0%, 100% { transform: rotate(15deg) translateX(20px) translateY(0); }
+            50% { transform: rotate(15deg) translateX(20px) translateY(-10px); }
+        }
+        
+        @keyframes fillGauge {
+            from { stroke-dashoffset: 283; } /* 2*PI*45 approx 283 */
+            to { stroke-dashoffset: 220; } /* 20% filled */
+        }
     </style>
 </head>
 <body>
@@ -2696,65 +2724,89 @@
         <div class="footer-info">12 / 14 — OFFRE SPÉCIALE</div>
     </div>
 
-    <!-- SLIDE 13: LE DÉFI PIONNIER (NEW) -->
-    <div class="slide-container" style="background: linear-gradient(135deg, #f0fdf4 0%, #ffffff 100%);">
-        <h2 class="slide-title">Votre Mission : <span style="color:var(--primary);">Opération Pionnier</span></h2>
+    <!-- SLIDE 13: LE DÉFI PIONNIER (GAMIFIED) -->
+    <div class="slide-container" style="background: radial-gradient(circle at center, #1e293b 0%, #0f172a 100%); color: white;">
+        <h2 class="slide-title" style="color: #fcd34d; text-shadow: 0 0 20px rgba(252, 211, 77, 0.5);">Mission : <span style="color:white;">Opération Pionnier</span></h2>
         
         <div class="content-area" style="display:flex; flex-direction:column; justify-content:center; align-items:center; height:100%;">
             
-            <!-- THE BIG DEAL -->
-            <div style="text-align:center; margin-bottom:40px;">
-                <div style="font-size:20px; text-transform:uppercase; letter-spacing:3px; color:var(--text-muted); margin-bottom:10px;">Offre Limitée aux Présents</div>
-                <h3 style="font-size:40px; color:var(--secondary); margin:0;">
-                    3 Parrainages validés en 14 jours<br>
-                    = <span style="color:var(--primary); font-weight:900; font-size:50px;">GRATUIT À VIE</span>
-                </h3>
+            <!-- HERO OFFER -->
+            <div class="animate-up" style="text-align:center; margin-bottom:50px; position:relative;">
+                <div style="font-size:14px; text-transform:uppercase; letter-spacing:4px; color:#94a3b8; margin-bottom:10px;">Offre Exclusive "Founders"</div>
+                <div style="font-size:60px; font-weight:900; line-height:1; background: linear-gradient(to right, #fcd34d, #f59e0b, #fcd34d); -webkit-background-clip: text; -webkit-text-fill-color: transparent; filter: drop-shadow(0 0 15px rgba(245, 158, 11, 0.5)); animation: pulseGlow 2s infinite;">
+                    GRATUIT À VIE
+                </div>
+                <div style="font-size:24px; color:#e2e8f0; margin-top:10px;">
+                    Si vous validez <span style="color:#fcd34d; font-weight:bold;">3 parrainages</span> en 14 jours
+                </div>
             </div>
 
-            <!-- THE 3 GAMIFICATION PILLARS -->
-            <div class="grid-3" style="gap:30px; width:100%;">
+            <!-- GAMIFIED GRID -->
+            <div class="grid-3" style="gap:40px; width:100%; max-width:1100px;">
                 
-                <!-- 1. GOLDEN TICKETS -->
-                <div class="card" style="border:3px solid #eab308; background:#fff;">
-                    <div class="icon-box" style="background:#fefce8; color:#eab308;"><i class="fas fa-ticket-alt"></i></div>
-                    <h4 style="color:#a16207;">3 Golden Tickets</h4>
-                    <p style="font-size:16px;">Vous recevrez 3 codes uniques.</p>
-                    <div style="background:#fefce8; padding:10px; border-radius:8px; font-style:italic; font-size:14px; color:#854d0e; margin-top:10px;">
-                        "Tu as 3 balles dans ton chargeur. Ne les gaspille pas. Donne-les à des gens fiables."
+                <!-- 1. LOOT: GOLDEN TICKETS -->
+                <div class="game-card" style="background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); backdrop-filter: blur(10px);">
+                    <div style="height: 120px; position: relative; display: flex; justify-content: center; align-items: center; perspective: 500px;">
+                        <!-- Ticket 1 -->
+                        <div class="ticket-anim" style="position: absolute; transform: rotate(-15deg) translateX(-20px); z-index: 1; animation: floatTicket1 3s ease-in-out infinite;">
+                            <div style="background: linear-gradient(135deg, #fcd34d, #d97706); width: 100px; height: 60px; border-radius: 5px; border: 2px dashed #78350f; display:flex; align-items:center; justify-content:center; box-shadow: 0 10px 20px rgba(0,0,0,0.5);">
+                                <i class="fas fa-ticket-alt" style="color: #78350f; font-size: 24px;"></i>
+                            </div>
+                        </div>
+                        <!-- Ticket 2 -->
+                        <div class="ticket-anim" style="position: absolute; transform: rotate(0deg) translateY(-10px); z-index: 2; animation: floatTicket2 3s ease-in-out infinite 0.5s;">
+                            <div style="background: linear-gradient(135deg, #fcd34d, #d97706); width: 100px; height: 60px; border-radius: 5px; border: 2px dashed #78350f; display:flex; align-items:center; justify-content:center; box-shadow: 0 10px 20px rgba(0,0,0,0.5);">
+                                <i class="fas fa-ticket-alt" style="color: #78350f; font-size: 24px;"></i>
+                            </div>
+                        </div>
+                        <!-- Ticket 3 -->
+                        <div class="ticket-anim" style="position: absolute; transform: rotate(15deg) translateX(20px); z-index: 3; animation: floatTicket3 3s ease-in-out infinite 1s;">
+                            <div style="background: linear-gradient(135deg, #fcd34d, #d97706); width: 100px; height: 60px; border-radius: 5px; border: 2px dashed #78350f; display:flex; align-items:center; justify-content:center; box-shadow: 0 10px 20px rgba(0,0,0,0.5);">
+                                <i class="fas fa-ticket-alt" style="color: #78350f; font-size: 24px;"></i>
+                            </div>
+                        </div>
+                    </div>
+                    <h4 style="color:#fcd34d; font-size: 22px; margin: 10px 0;">3 Golden Tickets</h4>
+                    <p style="color:#cbd5e1; font-size: 15px;">Votre munition pour réussir.</p>
+                    <div style="background:rgba(252, 211, 77, 0.1); color:#fcd34d; padding:10px; border-radius:8px; font-size:13px; margin-top:10px; border:1px solid rgba(252, 211, 77, 0.3);">
+                        <i class="fas fa-exclamation-circle"></i> Codes uniques générés ce soir
                     </div>
                 </div>
 
-                <!-- 2. DEADLINE -->
-                <div class="card" style="border:3px solid #ef4444; background:#fff;">
-                    <div class="icon-box" style="background:#fef2f2; color:#ef4444;"><i class="fas fa-hourglass-half"></i></div>
-                    <h4 style="color:#b91c1c;">Cercle Fermé</h4>
-                    <p style="font-size:16px;">Objectif : 100 Membres Fondateurs.</p>
-                    
-                    <!-- Progress Bar Simulation -->
-                    <div style="margin-top:15px;">
-                        <div style="display:flex; justify-content:space-between; font-size:12px; font-weight:700; margin-bottom:5px;">
-                            <span>20 Inscrits</span>
-                            <span style="color:#ef4444;">100 Max</span>
+                <!-- 2. QUEST: DEADLINE -->
+                <div class="game-card" style="background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); backdrop-filter: blur(10px);">
+                    <div style="height: 120px; display: flex; align-items: center; justify-content: center;">
+                        <div style="position: relative; width: 120px; height: 120px;">
+                            <svg viewBox="0 0 100 100" style="transform: rotate(-90deg);">
+                                <circle cx="50" cy="50" r="45" fill="none" stroke="#334155" stroke-width="8" />
+                                <circle cx="50" cy="50" r="45" fill="none" stroke="#ef4444" stroke-width="8" stroke-dasharray="283" stroke-dashoffset="220" style="animation: fillGauge 2s ease-out forwards;"/>
+                            </svg>
+                            <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); text-align: center;">
+                                <div style="font-size: 24px; font-weight: 800; color: #ef4444;">20</div>
+                                <div style="font-size: 10px; color: #94a3b8; text-transform: uppercase;">Inscrits</div>
+                            </div>
                         </div>
-                        <div style="width:100%; height:10px; background:#e5e7eb; border-radius:5px; overflow:hidden;">
-                            <div style="width:20%; height:100%; background:#ef4444;"></div>
-                        </div>
-                        <div style="font-size:12px; color:var(--text-muted); margin-top:5px; text-align:center;">
-                            Il reste 80 places avant fermeture.
-                        </div>
+                    </div>
+                    <h4 style="color:#ef4444; font-size: 22px; margin: 10px 0;">Cercle Fermé</h4>
+                    <p style="color:#cbd5e1; font-size: 15px;">Fermeture à 100 membres.</p>
+                    <div style="background:rgba(239, 68, 68, 0.1); color:#ef4444; padding:10px; border-radius:8px; font-size:13px; margin-top:10px; border:1px solid rgba(239, 68, 68, 0.3);">
+                        <i class="fas fa-fire"></i> Il reste 80 places
                     </div>
                 </div>
 
-                <!-- 3. STATUT SAGES -->
-                <div class="card" style="border:3px solid #3b82f6; background:#fff;">
-                    <div class="icon-box" style="background:#eff6ff; color:#3b82f6;"><i class="fas fa-crown"></i></div>
-                    <h4 style="color:#1d4ed8;">Conseil des Sages</h4>
-                    <p style="font-size:16px;">Devenez "Membre Fondateur".</p>
-                    <ul style="text-align:left; font-size:14px; color:var(--text-muted); margin-top:10px; padding-left:20px;">
-                        <li>Accès prioritaire aux nouveautés</li>
-                        <li>Mise en avant sur la page d'accueil</li>
-                        <li>Influence sur la roadmap</li>
-                    </ul>
+                <!-- 3. REWARD: BADGE -->
+                <div class="game-card" style="background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); backdrop-filter: blur(10px);">
+                    <div style="height: 120px; display: flex; align-items: center; justify-content: center;">
+                        <div style="position: relative;">
+                            <i class="fas fa-certificate" style="font-size: 80px; color: #3b82f6; filter: drop-shadow(0 0 10px rgba(59, 130, 246, 0.6)); animation: spinSlow 10s linear infinite;"></i>
+                            <i class="fas fa-crown" style="font-size: 35px; color: white; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);"></i>
+                        </div>
+                    </div>
+                    <h4 style="color:#60a5fa; font-size: 22px; margin: 10px 0;">Conseil des Sages</h4>
+                    <p style="color:#cbd5e1; font-size: 15px;">Débloquez le statut "Fondateur".</p>
+                    <div style="background:rgba(59, 130, 246, 0.1); color:#60a5fa; padding:10px; border-radius:8px; font-size:13px; margin-top:10px; border:1px solid rgba(59, 130, 246, 0.3);">
+                        <i class="fas fa-unlock"></i> Accès VIP & Roadmap
+                    </div>
                 </div>
 
             </div>
