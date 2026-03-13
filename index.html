@@ -1,0 +1,3979 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Popey - Présentation CCI Dax</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Urbanist:wght@300;400;600;700;800&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
+    <style>
+        :root {
+            /* NEW PALETTE: Match & Rencontre Style */
+            --bg-dark: #f0fdf4; /* Very light mint/cream base, let's go with the image style: #F5F5F0 */
+            --bg-color: #F5F5F0; 
+            --bg-card: #ffffff;
+            --primary: #991b1b; /* Deep Red / Bordeaux */
+            --primary-glow: rgba(153, 27, 27, 0.3);
+            --secondary: #1f2937; /* Dark Grey for contrast */
+            --danger: #ef4444;
+            --text-main: #1f2937;
+            --text-muted: #4b5563;
+            --glass-border: 2px solid #1f2937; /* Thick dark border for comic style */
+            --card-shadow: 5px 5px 0px rgba(0,0,0,0.1);
+        }
+
+        * { box-sizing: border-box; }
+        
+        body { 
+            background-color: var(--bg-color);
+            /* Remove dark gradients, add subtle pattern if needed */
+            background-image: radial-gradient(#991b1b 1px, transparent 1px);
+            background-size: 40px 40px; /* Polka dots */
+            margin: 0; 
+            font-family: 'Urbanist', sans-serif; /* Urbanist is good for headings, maybe use Inter for body */
+            color: var(--text-main); 
+            overflow: hidden; 
+            height: 100vh;
+            width: 100vw;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        /* Update Particles Canvas opacity for light mode */
+        #network-canvas {
+            opacity: 0.15;
+            filter: invert(1); /* Make particles dark? No, they are colored in JS. We will fix JS later. */
+        }
+
+        .presentation-wrapper {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+        }
+
+        .slide-container {
+            width: 1200px;
+            height: 680px;
+            background: #ffffff;
+            /* Remove backdrop filter for crisp look */
+            backdrop-filter: none;
+            -webkit-backdrop-filter: none;
+            position: absolute;
+            overflow: hidden;
+            display: none;
+            flex-direction: column;
+            padding: 30px 50px; 
+            border-radius: 24px;
+            /* Comic style border and shadow */
+            border: 3px solid #1f2937;
+            box-shadow: 15px 15px 0px rgba(0,0,0,0.8);
+            opacity: 0;
+            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .slide-container.active {
+            display: flex;
+            opacity: 1;
+            z-index: 10;
+            animation: slideIn 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: scale(0.95) translateY(30px); filter: blur(10px); }
+            to { opacity: 1; transform: scale(1) translateY(0); filter: blur(0); }
+        }
+
+        /* Typography */
+        h1 { 
+            font-family: 'Urbanist', sans-serif; 
+            font-size: 100px; 
+            margin: 0; 
+            color: var(--primary);
+            text-shadow: 4px 4px 0px rgba(0,0,0,0.1);
+            background: none;
+            -webkit-background-clip: unset;
+            -webkit-text-fill-color: unset;
+            text-align: center; 
+            font-weight: 900; 
+            letter-spacing: -3px;
+            line-height: 1;
+            text-transform: uppercase;
+        }
+
+        h2.slide-title { 
+            font-family: 'Urbanist', sans-serif; 
+            font-size: 42px; 
+            margin-bottom: 20px; 
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            color: var(--secondary); /* Dark title */
+            font-weight: 800;
+            letter-spacing: -1px;
+            border-bottom: 4px solid var(--primary);
+            padding-bottom: 10px;
+            display: inline-block; /* Underline only text */
+        }
+        
+        h2.slide-title::before {
+            display: none; /* Remove neon bar */
+        }
+
+        h2.slide-title span { color: var(--primary); }
+
+        h3 { font-family: 'Urbanist', sans-serif; color: var(--secondary); margin: 0 0 15px 0; font-size: 24px; font-weight: 700; }
+        
+        p { line-height: 1.7; font-size: 18px; color: var(--text-muted); margin: 0 0 15px 0; font-weight: 500; }
+        
+        strong { color: var(--primary); font-weight: 800; }
+
+        /* Layouts */
+        .content-area { flex: 1; display: flex; flex-direction: column; justify-content: center; position: relative; }
+        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 50px; width: 100%; height: 100%; align-items: center; }
+        .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 30px; width: 100%; }
+        
+        /* Components */
+        .badge { 
+            background: var(--primary); 
+            color: #fff; 
+            border: 2px solid var(--secondary);
+            box-shadow: 3px 3px 0px rgba(0,0,0,0.2);
+            padding: 8px 24px; 
+            border-radius: 50px; 
+            font-weight: 800; 
+            font-size: 14px; 
+            margin-bottom: 20px; 
+            display: inline-block; 
+            text-transform: uppercase; 
+            letter-spacing: 1px;
+        }
+
+        .card { 
+            background: #fff; 
+            padding: 30px; 
+            border-radius: 20px; 
+            border: 3px solid var(--secondary); 
+            box-shadow: 8px 8px 0px rgba(0,0,0,0.1);
+            position: relative; 
+            height: 100%; 
+            transition: all 0.3s ease; 
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .card:hover { 
+            transform: translate(-3px, -3px);
+            box-shadow: 12px 12px 0px var(--primary-glow);
+        } 
+
+        .card-danger { border-top: 4px solid var(--danger); }
+        .card-danger:hover { border-color: var(--danger); }
+        
+        .icon-box { 
+            width: 80px; 
+            height: 80px; 
+            background: #fff;
+            border: 3px solid var(--primary);
+            box-shadow: 4px 4px 0px rgba(0,0,0,0.1);
+            color: var(--primary);
+            border-radius: 20px; 
+            display: flex; 
+            justify-content: center; 
+            align-items: center; 
+            font-size: 32px; 
+            margin-bottom: 25px; 
+        }
+        
+        .card-danger .icon-box { 
+            color: var(--danger); 
+            background: #fff; 
+            border-color: var(--danger); 
+        }
+
+        /* Tabbed Interface for Spheres - Updated */
+        .sphere-tabs {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+
+        .sphere-tab-btn {
+            background: #fff;
+            border: 2px solid var(--secondary);
+            color: var(--secondary);
+            padding: 12px 24px;
+            border-radius: 50px;
+            cursor: pointer;
+            font-family: 'Urbanist', sans-serif;
+            font-weight: 800;
+            font-size: 16px;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            box-shadow: 4px 4px 0px rgba(0,0,0,0.1);
+        }
+
+        .sphere-tab-btn:hover {
+            transform: translate(-2px, -2px);
+            box-shadow: 6px 6px 0px rgba(0,0,0,0.1);
+        }
+
+        .sphere-tab-btn.active {
+            background: var(--primary);
+            color: #fff;
+            border-color: var(--secondary);
+            box-shadow: 4px 4px 0px var(--secondary);
+            transform: translate(-2px, -2px);
+        }
+
+        .sphere-content-display {
+            background: #fff;
+            border: 3px solid var(--secondary);
+            box-shadow: 10px 10px 0px rgba(0,0,0,0.1);
+            border-radius: 24px;
+            padding: 30px;
+            height: 400px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .sphere-tab-content {
+            display: none;
+            height: 100%;
+            animation: fadeIn 0.4s ease;
+        }
+
+        .sphere-tab-content.active {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .sphere-jobs-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 15px;
+            overflow-y: auto;
+            padding-right: 10px;
+            height: 100%;
+        }
+
+        .sphere-job-item {
+            background: #fff;
+            border: 2px solid var(--secondary);
+            padding: 12px;
+            border-radius: 12px;
+            font-size: 13px;
+            color: var(--text-main);
+            display: flex;
+            align-items: center;
+            transition: all 0.2s;
+            box-shadow: 3px 3px 0px rgba(0,0,0,0.05);
+        }
+
+        .sphere-job-item:hover {
+            background: #fff;
+            border-color: var(--primary);
+            transform: translateY(-2px);
+            box-shadow: 5px 5px 0px rgba(153, 27, 27, 0.1);
+        }
+
+        .sphere-job-item::before {
+            content: '❤'; /* Match theme heart instead of dot */
+            color: var(--primary);
+            margin-right: 8px;
+            font-weight: bold;
+            font-size: 14px;
+        }
+
+        .stat-container { margin-bottom: 25px; }
+        .stat-label { display: flex; justify-content: space-between; margin-bottom: 10px; font-weight: 700; color: var(--secondary); }
+        .stat-bar-bg { height: 12px; background: rgba(0,0,0,0.05); border-radius: 6px; overflow: hidden; border: 1px solid rgba(0,0,0,0.1); }
+        .stat-bar-fill { height: 100%; background: var(--primary); width: 0; border-radius: 6px; transition: width 1.5s cubic-bezier(0.22, 1, 0.36, 1); }
+        
+        .img-frame { 
+            position: relative; 
+            border-radius: 20px; 
+            overflow: hidden; 
+            box-shadow: 10px 10px 0px rgba(0,0,0,0.1);
+            border: 3px solid var(--secondary);
+        }
+        .img-frame img { width: 100%; height: 100%; object-fit: cover; display: block; }
+        
+        .phone-mockup {
+            width: 300px;
+            height: 580px;
+            border: 10px solid var(--secondary);
+            border-radius: 40px;
+            margin: 0 auto;
+            position: relative;
+            background: #fff;
+            overflow: hidden;
+            box-shadow: 15px 15px 0px rgba(0,0,0,0.1);
+        }
+        .phone-notch { position: absolute; top: 0; left: 50%; transform: translateX(-50%); width: 120px; height: 25px; background: var(--secondary); border-bottom-left-radius: 16px; border-bottom-right-radius: 16px; z-index: 2; }
+        .app-screen { padding: 40px 20px; height: 100%; display: flex; flex-direction: column; gap: 15px; background: #fdf2f2; }
+        .app-card { background: #fff; padding: 15px; border-radius: 12px; font-size: 14px; border: 2px solid var(--secondary); box-shadow: 3px 3px 0px rgba(0,0,0,0.05); color: var(--text-main); }
+        .app-card strong { color: var(--primary); }
+
+        /* Footer & Controls */
+        #globalFooterInfo { 
+            position: absolute; 
+            bottom: 30px; /* Aligned with gm-controls bottom */
+            height: 54px; /* Matches gm-controls height */
+            left: 60px; 
+            display: flex; 
+            align-items: center; /* Vertically centers text */
+            gap: 20px; 
+            color: rgba(148, 163, 184, 0.6); 
+            font-size: 14px; 
+            font-weight: 600;
+            z-index: 100;
+        }
+
+        .slide-container .footer-info {
+            display: none;
+        }
+        
+        .controls-overlay {
+            position: absolute;
+            bottom: 30px;
+            right: 30px;
+            display: flex;
+            gap: 12px;
+            z-index: 100;
+        }
+
+        .control-btn {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: #fff;
+            width: 44px;
+            height: 44px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s;
+            backdrop-filter: blur(5px);
+        }
+        .control-btn:hover { background: var(--primary); color: #0f172a; transform: translateY(-2px); }
+
+        .progress-bar {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            width: 0%;
+            transition: width 0.3s ease;
+            box-shadow: 0 -2px 10px rgba(132, 204, 22, 0.3);
+        }
+
+        /* Staggered Animations */
+        .animate-up { opacity: 0; animation: fadeInUp 0.5s ease forwards; }
+        .delay-1 { animation-delay: 0.1s; }
+        .delay-2 { animation-delay: 0.2s; }
+        .delay-3 { animation-delay: 0.3s; }
+        .delay-4 { animation-delay: 0.4s; }
+        .delay-5 { animation-delay: 0.5s; }
+
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Fragments for step-by-step reveal */
+    .fragment {
+        opacity: 0;
+        transform: translateY(10px);
+        transition: all 0.3s ease-out;
+    }
+    .fragment.visible {
+        opacity: 1;
+        transform: translateY(0);
+    }
+    
+    /* Utility */
+     .text-gradient { background: linear-gradient(90deg, var(--primary), #fff); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+     .text-danger { color: var(--danger); }
+     .bg-subtle { background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.05); padding: 20px; border-radius: 16px; }
+
+     /* Flip Card Styles */
+     .mission-grid {
+         display: flex;
+         flex-wrap: wrap;
+         gap: 20px;
+         justify-content: center;
+         align-content: center;
+         width: 100%;
+         height: 100%;
+     }
+
+     .mission-card {
+        width: 250px;
+        height: 220px;
+        perspective: 1000px;
+        background: transparent;
+        border: none;
+        padding: 0;
+        cursor: pointer;
+        position: relative;
+    }
+
+    .mission-card h4 {
+        font-size: 20px;
+        margin: 15px 0 10px 0;
+        color: var(--secondary);
+        font-weight: 800;
+        text-transform: uppercase;
+    }
+
+    .mission-card p {
+        font-size: 14px;
+        line-height: 1.4;
+        color: var(--text-muted);
+        margin: 0;
+    }
+
+    .mission-card i {
+        font-size: 40px;
+        margin-bottom: 10px;
+        /* Color set inline usually */
+    }
+     
+     .mission-card-inner {
+         position: relative;
+         width: 100%;
+         height: 100%;
+         text-align: center;
+         transition: transform 0.6s;
+         transform-style: preserve-3d;
+         border-radius: 16px;
+     }
+     
+     .mission-card.flipped .mission-card-inner {
+         transform: rotateY(180deg);
+     }
+     
+     .mission-card-front, .mission-card-back {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        -webkit-backface-visibility: hidden;
+        backface-visibility: hidden;
+        border-radius: 20px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        padding: 20px;
+        box-sizing: border-box;
+        border: 3px solid var(--secondary);
+        background: #fff;
+    }
+    
+    .mission-card-front {
+        background: #fff;
+    }
+    
+    .mission-card-back {
+        background: var(--secondary);
+        transform: rotateY(180deg);
+        border-color: var(--secondary);
+    }
+    
+    .mission-card:hover .mission-card-inner {
+        transform: translateY(-5px);
+        box-shadow: 10px 10px 0px rgba(153, 27, 27, 0.2);
+    }
+    
+    /* Back text color fix */
+    .mission-card-back h4 { color: #fff; }
+    .mission-card-back p { color: #eee; }
+    .mission-card-back i { color: #fff !important; } /* Force white icon on back */
+    
+    /* Shine effect removed or subtle */
+    .mission-card-back::after {
+        content: '';
+        position: absolute;
+        top: 0; left: 0; right: 0; bottom: 0;
+        background: linear-gradient(125deg, transparent 30%, rgba(255,255,255,0.1) 50%, transparent 70%);
+        background-size: 200% 100%;
+        border-radius: 16px;
+        opacity: 0.5;
+        pointer-events: none;
+        animation: shine 3s infinite;
+    }
+    
+    @keyframes shine {
+        0% { background-position: 100% 0; }
+        100% { background-position: -100% 0; }
+    }
+     .connection-canvas {
+         position: absolute;
+         top: 0;
+         left: 0;
+         width: 100%;
+         height: 100%;
+         pointer-events: none;
+         z-index: 1;
+     }
+     
+     .connection-line {
+         stroke: var(--primary);
+         stroke-width: 2;
+         stroke-dasharray: 10;
+         opacity: 0;
+         filter: drop-shadow(0 0 5px var(--primary));
+     }
+     
+     .connection-dot {
+         fill: #fff;
+         opacity: 0;
+         filter: drop-shadow(0 0 8px #fff);
+     }
+     
+     .ecosystem-card {
+          z-index: 2;
+          transition: all 0.5s ease;
+          opacity: 1;
+      }
+      
+      .ecosystem-card.dimmed {
+          opacity: 0.2;
+          transform: scale(0.95);
+          filter: grayscale(100%);
+      }
+      
+      .ecosystem-card.connected {
+          border-color: var(--primary) !important;
+          background: rgba(132, 204, 22, 0.2) !important;
+          box-shadow: 0 0 30px rgba(132, 204, 22, 0.5) !important;
+          transform: scale(1.1) translateY(-10px);
+          z-index: 10;
+      }
+      
+      .connection-label {
+          position: absolute;
+          background: #fff;
+          border: 2px solid var(--primary);
+          color: var(--secondary);
+          padding: 10px 20px;
+          border-radius: 50px;
+          font-size: 14px;
+          font-weight: 800;
+          opacity: 0;
+          transform: translate(-50%, -50%) scale(0.8);
+          z-index: 5;
+          box-shadow: 4px 4px 0px rgba(0,0,0,0.1);
+          white-space: nowrap;
+          text-transform: uppercase;
+      }
+
+        /* Super Match Styles */
+        .synergy-card.super-match .synergy-card-front {
+            border: 2px solid #fbbf24; /* Amber-400 */
+            background: linear-gradient(135deg, rgba(251, 191, 36, 0.15), rgba(251, 191, 36, 0.05));
+            box-shadow: 0 0 25px rgba(251, 191, 36, 0.4);
+        }
+        
+        .super-match-badge {
+            position: absolute;
+            top: -12px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: linear-gradient(90deg, #fbbf24, #f59e0b);
+            color: #0f172a;
+            font-weight: 900;
+            font-size: 10px;
+            padding: 5px 12px;
+            border-radius: 20px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.5);
+            z-index: 5;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            border: 2px solid #0f172a;
+            white-space: nowrap;
+            animation: pulseMatch 2s infinite;
+        }
+
+        @keyframes pulseMatch {
+            0% { transform: translateX(-50%) scale(1); box-shadow: 0 0 0 0 rgba(251, 191, 36, 0.7); }
+            70% { transform: translateX(-50%) scale(1.05); box-shadow: 0 0 0 10px rgba(251, 191, 36, 0); }
+            100% { transform: translateX(-50%) scale(1); box-shadow: 0 0 0 0 rgba(251, 191, 36, 0); }
+        }
+
+        /* Roulette Styles */
+        .roulette-machine-container {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .roulette-window {
+            width: 500px;
+            height: 120px;
+            background: #fff;
+            border: 4px solid var(--secondary);
+            border-radius: 12px;
+            overflow: hidden;
+            position: relative;
+            box-shadow: inset 0 0 10px rgba(0,0,0,0.1);
+        }
+
+        .roulette-strip {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            transition: transform 4s cubic-bezier(0.13, 0.99, 0.29, 1.01); /* Fast then slow */
+        }
+
+        .roulette-item {
+            height: 120px;
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 32px;
+            font-weight: 800;
+            color: var(--secondary);
+            text-transform: uppercase;
+            font-family: 'Urbanist', sans-serif;
+        }
+
+        .roulette-item:nth-child(odd) { background: rgba(0,0,0,0.03); }
+
+        .roulette-highlight {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border: 4px solid var(--primary);
+            box-shadow: 0 0 20px rgba(132, 204, 22, 0.2), inset 0 0 20px rgba(132, 204, 22, 0.1);
+            border-radius: 8px;
+            pointer-events: none;
+            z-index: 10;
+        }
+
+        .roulette-lever {
+            width: 40px;
+            height: 100px;
+            position: relative;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+        
+        .roulette-lever:active { transform: scale(0.95); }
+
+        .lever-base {
+            width: 20px;
+            height: 60px;
+            background: #475569;
+            border-radius: 4px;
+            position: absolute;
+            bottom: 0;
+            left: 10px;
+        }
+        
+        .lever-stick {
+            width: 8px;
+            height: 60px;
+            background: #cbd5e1;
+            position: absolute;
+            bottom: 40px;
+            left: 16px;
+            transform-origin: bottom center;
+            transition: transform 0.5s;
+        }
+
+        .roulette-lever.pulled .lever-stick {
+            transform: rotateX(180deg);
+        }
+
+        .lever-handle {
+            width: 30px;
+            height: 30px;
+            background: var(--danger);
+            border-radius: 50%;
+            position: absolute;
+            top: -15px; /* Relative to stick top */
+            left: -11px; /* Center on stick */
+            box-shadow: 0 5px 10px rgba(0,0,0,0.5);
+            /* Handle is child of stick in HTML logic? No, separate div for simplicity in CSS usually requires nesting or JS. 
+               Let's keep it simple: just animate the whole lever container or use JS class. */
+        }
+        
+        /* Better Lever Logic via JS class on parent */
+        .roulette-lever.pulled .lever-handle {
+             transform: translateY(100px); /* Fake pull down */
+             transition: transform 0.5s;
+        }
+
+        .roulette-result {
+            margin-top: 40px;
+            text-align: center;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.5s;
+        }
+
+        .roulette-result.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .result-label {
+            font-size: 14px;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 10px;
+        }
+
+        .result-job {
+            font-size: 50px;
+            font-weight: 900;
+            color: var(--primary);
+            text-shadow: 0 0 30px rgba(132, 204, 22, 0.4);
+        }
+
+        /* Game Master Mode Styles */
+        .gamemaster-blur {
+            filter: blur(15px);
+            pointer-events: none;
+            user-select: none;
+            transition: filter 0.8s ease;
+        }
+
+        .gamemaster-revealed {
+            filter: blur(0);
+            pointer-events: auto;
+            user-select: auto;
+        }
+
+        .roulette-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(10px);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 200;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s;
+        }
+
+        .roulette-overlay.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .roulette-box {
+            display: flex;
+            gap: 40px;
+            margin-bottom: 30px;
+            padding: 40px;
+            border-radius: 30px;
+        }
+
+        .roulette-seat {
+            width: 200px;
+            height: 200px;
+            border: 4px solid var(--primary);
+            border-radius: 50%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            background: #fff;
+            box-shadow: 10px 10px 0 rgba(132, 204, 22, 0.2);
+            animation: pulseGlow 2s infinite;
+        }
+
+        .seat-number {
+            font-size: 80px;
+            font-weight: 800;
+            color: var(--secondary);
+            font-family: 'Urbanist', sans-serif;
+        }
+
+        .seat-label {
+            font-size: 18px;
+            color: var(--primary);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            font-weight: 700;
+        }
+
+        .gm-controls {
+            position: absolute;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 20px;
+            z-index: 100;
+            background: #fff;
+            padding: 10px 20px;
+            border-radius: 20px;
+            border: 3px solid var(--secondary);
+            box-shadow: 4px 4px 0 rgba(0,0,0,0.1);
+        }
+
+        .gm-btn {
+            background: #f1f5f9;
+            color: var(--secondary);
+            border: 2px solid var(--secondary);
+            padding: 10px 20px;
+            border-radius: 12px;
+            cursor: pointer;
+            font-weight: 700;
+            transition: all 0.2s;
+            box-shadow: 2px 2px 0 rgba(0,0,0,0.05);
+        }
+        
+        .gm-btn:hover {
+            transform: translate(-2px, -2px);
+            box-shadow: 4px 4px 0 rgba(0,0,0,0.1);
+            background: #fff;
+        }
+        
+        .gm-btn.active {
+            background: var(--primary);
+            color: #fff;
+            border-color: var(--secondary);
+        }
+
+        .timer-display {
+            position: absolute;
+            top: 30px;
+            right: 30px;
+            font-size: 40px;
+            font-weight: 800;
+            color: #fff;
+            font-family: 'Urbanist', sans-serif;
+            background: rgba(239, 68, 68, 0.2);
+            padding: 10px 20px;
+            border-radius: 12px;
+            border: 2px solid var(--danger);
+            display: none;
+            z-index: 150;
+        }
+        
+        .challenge-card {
+            position: fixed;
+            top: 20px; /* Floating at top */
+            left: 50%;
+            transform: translateX(-50%) translateY(-200%); /* Start way above */
+            width: 90%;
+            max-width: 900px;
+            background: #fff;
+            border: 4px solid var(--secondary);
+            border-radius: 20px;
+            padding: 30px;
+            z-index: 2000;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            transition: all 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            opacity: 0;
+            pointer-events: none;
+            box-shadow: 15px 15px 0px rgba(0,0,0,0.1);
+        }
+
+        .challenge-card.active {
+            opacity: 1;
+            pointer-events: auto;
+            transform: translateX(-50%) translateY(0); /* Slide down */
+        }
+
+        .challenge-header {
+            font-size: 14px;
+            color: var(--primary);
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            font-weight: 800;
+            margin: 0;
+            opacity: 0.8;
+        }
+
+        .challenge-question {
+            font-size: 28px; /* Smaller font */
+            color: var(--secondary);
+            font-family: 'Urbanist', sans-serif;
+            font-weight: 900;
+            line-height: 1.2;
+            margin: 0;
+        }
+
+        .challenge-roles {
+            display: flex;
+            justify-content: center;
+            gap: 30px; /* More gap */
+            align-items: stretch;
+            margin-top: 10px; /* Space for the floating badges */
+        }
+
+        .role-box {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 20px 25px; /* More padding */
+            border-radius: 16px;
+            flex: 1;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            transition: all 0.3s;
+        }
+        
+        .role-box {
+            background: #f8fafc;
+            padding: 25px; /* More padding */
+            border-radius: 20px;
+            flex: 1;
+            border: 3px solid var(--secondary);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            transition: all 0.3s;
+            box-shadow: 6px 6px 0px rgba(0,0,0,0.05);
+        }
+        
+        .role-box:hover {
+            background: #fff;
+            border-color: var(--primary);
+            transform: translateY(-5px);
+            box-shadow: 10px 10px 0px rgba(153, 27, 27, 0.1);
+        }
+
+        .role-desc {
+            font-size: 20px; /* Larger text */
+            color: var(--secondary);
+            font-weight: 700;
+            line-height: 1.4;
+        }
+
+        .vs-badge {
+            align-self: center;
+            font-size: 18px;
+            font-weight: 900;
+            color: var(--primary);
+            background: #fff;
+            padding: 5px;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            border: 3px solid var(--secondary);
+            box-shadow: 4px 4px 0 rgba(0,0,0,0.05);
+        }
+
+        /* Close Button for Challenge */
+        .close-challenge-btn {
+            position: absolute;
+            top: 15px;
+            right: 20px;
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            font-size: 24px;
+            cursor: pointer;
+            transition: color 0.2s;
+        }
+        .close-challenge-btn:hover { color: var(--primary); }
+        
+        /* Challenge Card Centering for specific slides */
+        .challenge-card.centered-challenge {
+            top: 50%;
+            transform: translate(-50%, -50%);
+            border-radius: 24px; /* Fully rounded */
+        }
+        
+        .challenge-card.centered-challenge.active {
+            transform: translate(-50%, -50%);
+        }
+
+        /* Hidden content state */
+        .content-hidden {
+            opacity: 0 !important;
+            pointer-events: none;
+            transition: opacity 0.8s ease;
+        }
+        
+        /* Ensure titles are hidden too if part of content-hidden context, 
+           but usually content-area wraps everything except title? 
+           Let's check HTML structure. 
+           Slide 2 structure: h2.slide-title is sibling to .content-area.
+           So we need to hide the title too.
+        */
+        .slide-container.hide-all-content > *:not(.footer-info) {
+            opacity: 0;
+            transition: opacity 0.8s ease;
+        }
+        
+        .slide-container.hide-all-content.revealed > *:not(.footer-info) {
+            opacity: 1;
+        }
+
+        @keyframes pulseGlow {
+            0% { box-shadow: 0 0 20px rgba(132, 204, 22, 0.2); }
+            50% { box-shadow: 0 0 50px rgba(132, 204, 22, 0.5); }
+            100% { box-shadow: 0 0 20px rgba(132, 204, 22, 0.2); }
+        }
+
+        @keyframes pulseRed {
+            0% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.4); }
+            70% { box-shadow: 0 0 0 20px rgba(239, 68, 68, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
+        }
+
+        @keyframes heartbeat {
+            0% { transform: scale(1); }
+            15% { transform: scale(1.1); }
+            30% { transform: scale(1); }
+            45% { transform: scale(1.1); }
+            60% { transform: scale(1); }
+            100% { transform: scale(1); }
+        }
+
+        /* Domino Multi-Scenario Layout */
+        .domino-layout {
+            display: flex;
+            width: 100%;
+            height: 100%;
+            gap: 30px;
+        }
+
+        .domino-sidebar {
+            width: 250px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            border-right: 1px solid rgba(0, 0, 0, 0.1);
+            padding-right: 20px;
+        }
+
+        .domino-sidebar-btn {
+            background: #fff;
+            border: 2px solid var(--secondary);
+            color: var(--text-muted);
+            padding: 15px 20px;
+            border-radius: 12px;
+            cursor: pointer;
+            text-align: left;
+            font-family: 'Urbanist', sans-serif;
+            font-weight: 700;
+            font-size: 16px;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            box-shadow: 4px 4px 0px rgba(0,0,0,0.05);
+        }
+
+        .domino-sidebar-btn:hover {
+            background: #fff;
+            color: var(--primary);
+            transform: translateX(5px);
+            box-shadow: 6px 6px 0px rgba(0,0,0,0.05);
+        }
+
+        .domino-sidebar-btn.active {
+            background: var(--primary);
+            color: #fff;
+            border-color: var(--secondary);
+            box-shadow: 4px 4px 0px rgba(0,0,0,0.1);
+        }
+
+        .domino-stage {
+            flex: 1;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .domino-scenario {
+            display: none;
+            width: 100%;
+            animation: fadeIn 0.5s ease;
+        }
+
+        .domino-scenario.active {
+            display: block;
+        }
+
+        /* Updated Domino Container for horizontal flow */
+        .domino-container {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+            margin-top: 30px;
+            position: relative;
+        }
+
+        .domino-card {
+            background: #fff;
+            border: 3px solid var(--secondary);
+            border-radius: 20px;
+            padding: 0; /* Remove padding to allow header */
+            width: 180px; /* Slightly wider */
+            height: 240px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            position: relative;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            opacity: 0.6;
+            transform: scale(0.9);
+            filter: grayscale(100%);
+            overflow: hidden;
+            box-shadow: 5px 5px 0px rgba(0,0,0,0.1);
+        }
+
+        .domino-card-header {
+            width: 100%;
+            height: 80px;
+            background: var(--bg-dark);
+            border-bottom: 3px solid var(--secondary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 15px;
+            position: relative;
+        }
+
+        /* Scalloped edge effect via radial gradient? Or just simple line. Simple line for now. */
+
+        .domino-card.active {
+            opacity: 1;
+            transform: scale(1.05) translateY(-10px);
+            filter: grayscale(0%);
+            box-shadow: 10px 10px 0px rgba(153, 27, 27, 0.2);
+            border-color: var(--primary);
+            z-index: 10;
+        }
+
+        .domino-card.active .domino-card-header {
+            background: var(--primary-glow);
+            border-color: var(--primary);
+        }
+
+        .domino-icon {
+            width: 60px;
+            height: 60px;
+            background: #fff;
+            border: 3px solid var(--secondary);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            color: var(--primary);
+            position: absolute;
+            top: 50px; /* Halfway on header line */
+            z-index: 2;
+            box-shadow: 0 4px 0 rgba(0,0,0,0.1);
+        }
+        
+        .domino-card.active .domino-icon {
+            border-color: var(--primary);
+            color: var(--primary);
+            transform: scale(1.1);
+        }
+
+        .domino-content {
+            padding: 40px 15px 15px 15px; /* Top padding for icon space */
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            flex: 1;
+            width: 100%;
+        }
+
+        .domino-role {
+            font-weight: 800;
+            color: var(--secondary);
+            font-size: 16px;
+            margin-bottom: 10px;
+            line-height: 1.2;
+            text-transform: uppercase;
+        }
+
+        .domino-value {
+            margin-top: auto;
+            font-weight: 800;
+            font-size: 20px;
+            color: #fff;
+            background: var(--primary);
+            padding: 8px 15px;
+            border-radius: 50px;
+            border: 2px solid var(--secondary);
+            box-shadow: 2px 2px 0 rgba(0,0,0,0.1);
+        }
+
+        .total-value-display {
+            font-size: 40px;
+            font-weight: 900;
+            text-align: center;
+            margin-top: 40px;
+            color: var(--secondary);
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.5s ease;
+        }
+
+        .total-value-display.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Animation classes for the new slide */
+        .problem-text {
+            font-size: 2.5rem;
+            font-weight: 800;
+            color: var(--secondary);
+            margin: 20px 0;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.5s ease;
+        }
+
+        .problem-text.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .problem-text.strike {
+            text-decoration: line-through;
+            text-decoration-color: var(--primary);
+            text-decoration-thickness: 5px;
+            opacity: 0.4;
+        }
+
+        .solution-reveal {
+            margin-top: 40px;
+            padding: 30px;
+            background: white;
+            border-radius: 20px;
+            border: 3px solid var(--primary);
+            box-shadow: 10px 10px 0 rgba(0,0,0,0.1);
+            opacity: 0;
+            transform: scale(0.9);
+            transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            max-width: 800px;
+            text-align: left;
+        }
+
+        .solution-reveal.visible {
+            opacity: 1;
+            transform: scale(1);
+        }
+
+        .bias-card {
+            background: #f3f4f6;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            border-left: 5px solid #ef4444;
+        }
+
+        .pivot-card {
+            background: #ecfccb;
+            padding: 15px;
+            border-radius: 10px;
+            margin-top: 15px;
+            border-left: 5px solid #84cc16;
+        }
+
+
+        /* Marketplace Styles */
+        .market-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            width: 100%;
+        }
+
+        .market-card {
+            background: #fff;
+            border: 3px solid var(--secondary);
+            border-radius: 20px;
+            padding: 20px;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            transition: all 0.3s;
+            overflow: hidden;
+            min-height: 280px;
+            box-shadow: 8px 8px 0px rgba(0,0,0,0.1);
+        }
+
+        .market-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 12px 12px 0px rgba(153, 27, 27, 0.2);
+            border-color: var(--primary);
+        }
+
+        .market-credits {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: #fff;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 800;
+            color: #fbbf24;
+            border: 2px solid var(--secondary);
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            box-shadow: 2px 2px 0 rgba(0,0,0,0.05);
+        }
+
+        .market-tag {
+            display: inline-block;
+            padding: 6px 12px;
+            border-radius: 50px;
+            font-size: 10px;
+            text-transform: uppercase;
+            font-weight: 800;
+            letter-spacing: 1px;
+            margin-bottom: 15px;
+            width: fit-content;
+            border: 2px solid var(--secondary);
+        }
+
+        .tag-immo { background: #84cc16; color: #fff; }
+        .tag-btp { background: #ef4444; color: #fff; }
+        .tag-linkedin { background: #3b82f6; color: #fff; }
+
+        .market-quote {
+            font-size: 16px;
+            color: var(--secondary);
+            font-weight: 700;
+            font-style: italic;
+            margin-bottom: 20px;
+            line-height: 1.5;
+            flex-grow: 1;
+        }
+
+        .market-user {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 20px;
+            padding-top: 15px;
+            border-top: 1px solid rgba(0,0,0,0.05);
+        }
+
+        .market-avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: var(--bg-dark);
+            border: 2px solid var(--secondary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 12px;
+            color: var(--secondary);
+        }
+
+        .market-btn {
+            width: 100%;
+            padding: 12px;
+            border-radius: 12px;
+            border: 3px solid var(--secondary);
+            font-weight: 800;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-transform: uppercase;
+            font-size: 12px;
+            letter-spacing: 1px;
+            box-shadow: 4px 4px 0px rgba(0,0,0,0.1);
+        }
+
+        .btn-unlock { background: var(--primary); color: #fff; }
+        .btn-reserve { background: var(--danger); color: #fff; }
+        .btn-apply { background: #fff; color: var(--secondary); }
+        .market-btn:hover { transform: translate(-2px, -2px); box-shadow: 6px 6px 0px rgba(0,0,0,0.1); }
+
+        /* Dashboard Match Styles */
+        .dashboard-container {
+            width: 360px; /* Slightly narrower */
+            background: #fff;
+            border-radius: 30px; /* Reduced radius */
+            padding: 20px; /* Reduced padding */
+            box-shadow: 15px 15px 0px rgba(0,0,0,0.1);
+            border: 3px solid var(--secondary);
+            margin: 0 auto;
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            gap: 10px; /* Reduced gap */
+        }
+
+        .dashboard-container::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0;
+            height: 150px;
+            background: radial-gradient(circle at 50% 0%, rgba(153, 27, 27, 0.1), transparent 70%);
+            z-index: 0;
+        }
+
+        .dashboard-img {
+            width: 340px;
+            height: auto;
+            border-radius: 40px;
+            box-shadow: 5px 5px 0px rgba(0,0,0,0.1);
+            border: 2px solid var(--secondary);
+            transition: transform 0.3s;
+        }
+        
+        .dashboard-img:hover {
+            transform: scale(1.02);
+        }
+
+        .status-pill {
+            background: #fff;
+            border: 2px solid var(--secondary);
+            border-radius: 20px;
+            padding: 8px 15px; /* Reduced */
+            text-align: center;
+            margin-bottom: 5px; 
+            position: relative;
+            z-index: 1;
+            color: var(--secondary);
+            font-weight: 700;
+            box-shadow: 3px 3px 0px rgba(0,0,0,0.05);
+        }
+
+        .match-avatar-large {
+            width: 90px; /* Reduced */
+            height: 90px;
+            border-radius: 50%;
+            border: 3px solid var(--primary);
+            margin: 0 auto 5px;
+            position: relative;
+            background-image: url('https://images.unsplash.com/photo-1500648767791-00dcc994a43e?ixlib=rb-4.0.3&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80');
+            background-size: cover;
+            box-shadow: 0 0 0 4px #fff, 0 0 0 7px var(--secondary); /* Double border effect */
+            flex-shrink: 0;
+        }
+
+        .match-name {
+            font-size: 26px; /* Reduced */
+            font-weight: 900;
+            text-align: center;
+            color: var(--primary);
+            margin-bottom: 5px;
+            font-family: 'Urbanist', sans-serif;
+            line-height: 1;
+        }
+
+        .match-action-btn {
+            background: var(--primary);
+            color: #fff;
+            width: 100%;
+            padding: 14px; /* Reduced */
+            border-radius: 12px;
+            border: 3px solid var(--secondary);
+            font-size: 16px;
+            font-weight: 800;
+            text-transform: uppercase;
+            cursor: pointer;
+            margin-top: 5px;
+            box-shadow: 4px 4px 0px rgba(0,0,0,0.1);
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+        
+        .match-action-btn:hover { transform: translate(-2px, -2px); box-shadow: 6px 6px 0px rgba(0,0,0,0.1); }
+
+        .objective-box {
+            background: #fff;
+            border: 2px solid var(--secondary);
+            border-radius: 12px;
+            padding: 15px;
+            margin-top: 15px;
+            color: var(--text-main);
+            box-shadow: 3px 3px 0px rgba(0,0,0,0.05);
+        }
+
+        /* Reputation Stars */
+        .rep-stars { color: var(--accent); font-size: 24px; margin-bottom: 10px; text-shadow: 2px 2px 0px rgba(0,0,0,0.1); }
+        
+        /* Synergy Generator Styles */
+        .synergy-input-container {
+            position: relative;
+            display: flex;
+            gap: 15px;
+            width: 100%;
+            max-width: 600px;
+            margin-bottom: 40px;
+            z-index: 50;
+        }
+
+        .synergy-input {
+            flex: 1;
+            background: #fff;
+            border: 3px solid var(--secondary);
+            border-radius: 12px;
+            padding: 15px 25px;
+            color: var(--text-main);
+            font-size: 18px;
+            font-family: 'Urbanist', sans-serif;
+            font-weight: 700;
+            transition: all 0.3s;
+            box-shadow: 5px 5px 0px rgba(0,0,0,0.1);
+        }
+
+        .synergy-input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 8px 8px 0px rgba(153, 27, 27, 0.2);
+        }
+
+        .synergy-btn {
+            background: var(--primary);
+            color: #fff;
+            border: 3px solid var(--secondary);
+            border-radius: 12px;
+            padding: 0 30px;
+            font-weight: 800;
+            font-size: 16px;
+            text-transform: uppercase;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            box-shadow: 5px 5px 0px rgba(0,0,0,0.1);
+        }
+
+        .synergy-btn:hover {
+            transform: translate(-2px, -2px);
+            box-shadow: 8px 8px 0px rgba(0,0,0,0.1);
+        }
+
+        .synergy-suggestions {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0; /* Match input width approx */
+            background: #fff;
+            border: 3px solid var(--secondary);
+            border-radius: 12px;
+            margin-top: 5px;
+            max-height: 200px;
+            overflow-y: auto;
+            display: none;
+            box-shadow: 10px 10px 0px rgba(0,0,0,0.1);
+        }
+
+        .synergy-suggestion-item {
+            padding: 12px 20px;
+            cursor: pointer;
+            transition: background 0.2s;
+            color: var(--text-main);
+            font-weight: 600;
+            border-bottom: 1px solid rgba(0,0,0,0.05);
+        }
+
+        .synergy-suggestion-item:hover {
+            background: #fef2f2;
+            color: var(--primary);
+        }
+
+        .synergy-results-wrapper {
+            position: relative;
+            width: 100%;
+            margin-top: 20px;
+        }
+
+        .synergy-results-grid {
+            display: flex;
+            gap: 20px;
+            overflow-x: auto;
+            scroll-snap-type: x mandatory;
+            padding: 10px 5px 30px 5px; /* Padding for hover effects */
+            scroll-behavior: smooth;
+            -webkit-overflow-scrolling: touch;
+            scrollbar-width: none; /* Firefox */
+        }
+        
+        .synergy-results-grid::-webkit-scrollbar { 
+            display: none; /* Chrome/Safari */
+        }
+
+        .synergy-card {
+            min-width: 220px; /* Reduced width */
+            flex-shrink: 0;
+            scroll-snap-align: center;
+            width: 220px; 
+            height: 320px; /* Reduced height */
+            perspective: 1000px;
+            background: transparent;
+            border: none;
+            padding: 0;
+            cursor: pointer;
+            position: relative;
+            opacity: 0;
+            animation: fadeInUp 0.5s forwards;
+            transition: transform 0.3s;
+        }
+        
+        .synergy-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .synergy-card-inner {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            text-align: center;
+            transition: transform 0.6s;
+            transform-style: preserve-3d;
+            border-radius: 20px; /* Smaller radius */
+            box-shadow: 8px 8px 0 rgba(0,0,0,0.1);
+        }
+
+        .synergy-card.flipped .synergy-card-inner {
+            transform: rotateY(180deg);
+        }
+
+        .synergy-card-front, .synergy-card-back {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            -webkit-backface-visibility: hidden;
+            backface-visibility: hidden;
+            border-radius: 20px;
+            overflow: hidden;
+            background: #fff;
+            border: 3px solid var(--secondary);
+        }
+
+        .synergy-card-front {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .synergy-header-bg {
+            height: 90px; /* Reduced header */
+            width: 100%;
+            position: relative;
+            clip-path: ellipse(150% 100% at 50% 0%); /* Rounded bottom edge */
+        }
+
+        .synergy-avatar {
+            width: 80px; /* Reduced avatar */
+            height: 80px;
+            border-radius: 50%;
+            border: 4px solid #fff;
+            background: #f8fafc;
+            margin: -40px auto 10px auto; /* Adjusted overlap */
+            position: relative;
+            z-index: 2;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 32px;
+            color: var(--secondary);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        .synergy-body {
+            padding: 0 15px 15px 15px;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .synergy-job-title {
+            font-size: 18px; /* Reduced font */
+            font-weight: 900;
+            color: var(--secondary);
+            margin-bottom: 5px;
+            line-height: 1.1;
+        }
+
+        .synergy-match-badge {
+            background: var(--primary);
+            color: #fff;
+            padding: 4px 12px;
+            border-radius: 50px;
+            font-weight: 800;
+            font-size: 12px;
+            margin-bottom: 15px;
+            border: 2px solid var(--secondary);
+            box-shadow: 2px 2px 0 rgba(0,0,0,0.1);
+            transform: rotate(-2deg);
+        }
+
+        .synergy-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 5px;
+            justify-content: center;
+            margin-top: auto;
+        }
+
+        .synergy-tag {
+            font-size: 10px;
+            color: var(--secondary);
+            background: #f1f5f9;
+            padding: 4px 8px;
+            border-radius: 15px;
+            border: 1px solid rgba(0,0,0,0.05);
+            font-weight: 700;
+        }
+        
+        /* More prominent details button */
+        .synergy-details-hint {
+            margin-top: 15px;
+            font-size: 12px;
+            color: var(--text-muted);
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            opacity: 0.6;
+            transition: opacity 0.3s;
+        }
+        
+        .synergy-card:hover .synergy-details-hint {
+            opacity: 1;
+        }
+
+        .synergy-card-back {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            -webkit-backface-visibility: hidden;
+            backface-visibility: hidden;
+            border-radius: 20px;
+            overflow: hidden;
+            background: #fff;
+            border: 3px solid var(--secondary);
+            transform: rotateY(180deg);
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+        }
+        
+        .synergy-back-icon {
+            font-size: 30px;
+            color: var(--primary);
+            margin-bottom: 15px;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: rgba(153, 27, 27, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Market Card Redesign */
+        .market-card {
+            background: #fff;
+            border: 3px solid var(--secondary);
+            border-radius: 20px;
+            padding: 20px;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            transition: all 0.3s;
+            overflow: hidden;
+            min-height: 280px;
+            box-shadow: 8px 8px 0px rgba(0,0,0,0.1);
+        }
+
+        .market-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 12px 12px 0px rgba(153, 27, 27, 0.2);
+            border-color: var(--primary);
+        }
+        
+        .market-quote {
+            font-size: 16px;
+            color: var(--text-main);
+            font-style: italic;
+            margin-bottom: 20px;
+            line-height: 1.5;
+            flex-grow: 1;
+        }
+        
+        .market-avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: var(--bg-dark);
+            border: 2px solid var(--secondary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 12px;
+            color: var(--secondary);
+        }
+
+        .carousel-btn {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            background: #fff;
+            border: 3px solid var(--secondary);
+            color: var(--secondary);
+            width: 40px; 
+            height: 40px;
+            border-radius: 50%;
+            display: flex; 
+            align-items: center; 
+            justify-content: center;
+            cursor: pointer;
+            z-index: 10;
+            transition: all 0.2s;
+            box-shadow: 4px 4px 0px rgba(0,0,0,0.1);
+            opacity: 0; /* Hidden by default */
+            pointer-events: none;
+        }
+        
+        .carousel-btn.visible {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .carousel-btn:hover {
+            background: var(--primary);
+            color: #fff;
+            transform: translateY(-50%) scale(1.1);
+            border-color: var(--secondary);
+        }
+
+        .carousel-btn.prev { left: -20px; }
+        .carousel-btn.next { right: -20px; }
+
+        /* Navigation Controls Visibility Fix */
+        .controls-overlay {
+            position: absolute;
+            bottom: 30px;
+            right: 50px;
+            display: flex;
+            gap: 15px;
+            z-index: 100;
+        }
+
+        .control-btn {
+            width: 50px;
+            height: 50px;
+            background: #fff;
+            border: 3px solid var(--secondary);
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            color: var(--secondary);
+            font-size: 20px;
+            box-shadow: 4px 4px 0px rgba(0,0,0,0.1);
+        }
+
+        .control-btn:hover {
+            transform: translate(-2px, -2px);
+            background: var(--primary);
+            color: #fff;
+            border-color: var(--secondary);
+            box-shadow: 6px 6px 0px rgba(0,0,0,0.1);
+        }
+
+        /* Roulette Result Text Fix */
+        .result-job {
+            color: var(--primary);
+            text-shadow: 2px 2px 0px rgba(0,0,0,0.1);
+        }
+
+        /* Timer Display Fix */
+        .timer-display {
+            background: #fff;
+            color: var(--secondary);
+            border: 3px solid var(--secondary);
+            box-shadow: 5px 5px 0px rgba(0,0,0,0.1);
+            font-weight: 900;
+        }
+        
+        /* Fix Roulette Overlay Text */
+        .roulette-overlay h2 { color: #fff; text-shadow: 0 0 10px #000; } 
+        .roulette-overlay p { color: #eee; text-shadow: 0 0 5px #000; }
+        
+    </style>
+</head>
+<body>
+<canvas id="network-canvas" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 0; pointer-events: none; opacity: 0.4;"></canvas>
+<div class="presentation-wrapper" id="wrapper" style="position: relative; z-index: 1;">
+
+    <!-- SLIDE 1: ACCUEIL -->
+    <div class="slide-container active">
+        <div class="content-area" style="align-items: center; text-align: center;">
+            <div class="badge animate-up">Session CCI Landes 2026</div>
+            <h1 class="animate-up delay-1">POPEY</h1>
+            <p class="animate-up delay-2" style="font-size: 32px; max-width: 900px; color: var(--secondary); margin-top: 20px; font-weight: 300;">
+                L'intelligence collective au service du <strong class="text-gradient">Grand Dax</strong>.
+            </p>
+            <div class="animate-up delay-3" style="width: 80px; height: 6px; background: var(--primary); margin: 40px 0; border-radius: 3px;"></div>
+            <p class="animate-up delay-4" style="letter-spacing: 4px; font-weight: 700; text-transform: uppercase; color: var(--text-muted); font-size: 16px;">
+                De l'isolement à la co-opétition
+            </p>
+        </div>
+        <div class="footer-info">01 / 14 — STRATÉGIE</div>
+    </div>
+
+    <!-- SLIDE 2: LE PROBLÈME -->
+    <div class="slide-container">
+        <h2 class="slide-title">Le Diagnostic : <span style="color:var(--primary);">L'Urgence Territoriale</span></h2>
+        <div class="content-area">
+            <div class="grid-3">
+                <div class="card card-danger fragment">
+                    <div class="icon-box"><i class="fas fa-user-lock"></i></div>
+                    <h3>Solitude du Gérant</h3>
+                    <p>85% des entrepreneurs de Dax décident seuls. Sans effet miroir, le dirigeant s'enferme dans ses biais cognitifs et rate des virages stratégiques.</p>
+                </div>
+                <div class="card card-danger fragment">
+                    <div class="icon-box"><i class="fas fa-hourglass-half"></i></div>
+                    <h3>Érosion du Temps</h3>
+                    <p>La prospection "sauvage" dévore 1/3 de la semaine. Chaque heure passée à "chasser" est une heure de production perdue à jamais.</p>
+                </div>
+                <div class="card card-danger fragment">
+                    <div class="icon-box"><i class="fas fa-comments-dollar"></i></div>
+                    <h3>Réseaux Stériles</h3>
+                    <p>Les clubs traditionnels privilégient souvent le "social" au "business". On y échange des cartes de visite, rarement des contrats signés.</p>
+                </div>
+            </div>
+        </div>
+        <div class="footer-info">02 / 14 — DIAGNOSTIC</div>
+    </div>
+
+    <!-- SLIDE 3: ANATOMIE DE L'ÉCHEC -->
+    <div class="slide-container">
+        <h2 class="slide-title">Anatomie de <span style="color:var(--primary);">l'Échec</span></h2>
+        <div class="content-area">
+            <div class="grid-2">
+                <div class="fragment">
+                    <h3 style="color:var(--danger); margin-bottom: 25px;">Pourquoi les TPE chutent-elles ?</h3>
+                    <div class="bg-subtle" style="margin-bottom: 15px; border-left: 4px solid var(--danger);">
+                        <p style="margin:0; color:var(--text-main);"><strong>1. Absence de Synergie :</strong><br>Incapacité à créer des "offres globales" packagées.</p>
+                    </div>
+                    <div class="bg-subtle" style="margin-bottom: 15px; border-left: 4px solid var(--danger);">
+                        <p style="margin:0; color:var(--text-main);"><strong>2. Fragilité Commerciale :</strong><br>Dépendance à un seul canal d'acquisition (souvent le bouche-à-oreille passif).</p>
+                    </div>
+                    <div class="bg-subtle" style="border-left: 4px solid var(--danger);">
+                        <p style="margin:0; color:var(--text-main);"><strong>3. Tunnel de Vision :</strong><br>Ignorance des besoins périphériques du client.</p>
+                    </div>
+                </div>
+                <div style="display:flex; flex-direction:column; align-items:center; justify-content:center;" class="fragment">
+                    <div style="position:relative; width:300px; height:300px; border-radius:50%; border: 4px dashed var(--danger); display:flex; flex-direction:column; align-items:center; justify-content:center; animation: pulseRed 2s infinite;">
+                        <span style="font-size: 90px; color:var(--danger); font-weight:800; line-height:1; animation: heartbeat 1.5s ease-in-out infinite;">49%</span>
+                        <p style="text-align:center; font-weight:600; color:var(--text-main); margin-top:10px;">de cessation d'activité<br>avant 5 ans</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="footer-info">03 / 14 — CONSTAT</div>
+    </div>
+
+    <!-- SLIDE 4: REALITE -->
+    <div class="slide-container" id="slide-story">
+        <h2 class="slide-title">La Solitude du <span>Dirigeant</span></h2>
+        
+        <div class="content-area" style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; position: relative;">
+            
+            <!-- PHASE 1: LES MYTHES -->
+            <div id="story-myths" style="text-align: center; transition: all 0.5s ease; position: absolute; width: 100%; top: 50%; transform: translateY(-50%);">
+                <div class="problem-text" id="prob1" style="font-size: 3rem;">"Je suis seul."</div>
+                <div class="problem-text" id="prob2" style="font-size: 3rem;">"Le réseau, c'est du temps perdu."</div>
+                <div class="problem-text" id="prob3" style="font-size: 3rem;">"Pas de synergie possible."</div>
+                
+                <button class="gm-btn" id="revealBtn" style="margin-top: 50px; transform: scale(1.2); opacity: 0; pointer-events: none; transition: opacity 0.5s ease;" onclick="revealStoryPhase2()">
+                    <i class="fas fa-eye"></i> Voir la réalité
+                </button>
+            </div>
+
+            <!-- PHASE 2: LA REALITE (Hidden initially) -->
+            <div id="story-reality" style="opacity: 0; pointer-events: none; transition: all 0.5s ease; width: 100%; max-width: 1000px; transform: translateY(20px);">
+                
+                <div style="text-align: center; margin-bottom: 40px;">
+                    <h3 style="font-size: 32px; color: var(--secondary); margin: 0;">L'Exemple du <span style="color: var(--primary);">Restaurateur de Dax</span></h3>
+                </div>
+                
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 40px; align-items: stretch;">
+                    
+                    <!-- LEFT: SEUL -->
+                    <div style="background: white; border: 3px solid #fee2e2; border-radius: 20px; padding: 30px; box-shadow: 0 10px 30px rgba(239, 68, 68, 0.1); position: relative; overflow: hidden;">
+                        <div style="position: absolute; top: 0; left: 0; width: 100%; height: 5px; background: #ef4444;"></div>
+                        <h4 style="color: #b91c1c; font-size: 24px; margin-top: 0; display: flex; align-items: center; gap: 10px;">
+                            <i class="fas fa-user-slash" style="background: #fee2e2; padding: 10px; border-radius: 50%;"></i> 
+                            Seul
+                        </h4>
+                        <div style="font-style: italic; color: var(--text-muted); font-size: 18px; margin: 20px 0; min-height: 60px;">
+                            "Ma salle est vide... C'est la crise, les gens n'ont plus d'argent."
+                        </div>
+                        <div style="background: #fef2f2; padding: 15px; border-radius: 12px; border-left: 4px solid #ef4444;">
+                            <strong style="color: #b91c1c; display: block; margin-bottom: 5px;">RÉACTION :</strong>
+                            Je baisse mes prix.
+                            <br><strong style="color: #ef4444;">➔ Je coule.</strong>
+                        </div>
+                    </div>
+
+                    <!-- RIGHT: ENSEMBLE -->
+                    <div style="background: white; border: 3px solid #dcfce7; border-radius: 20px; padding: 25px; box-shadow: 0 10px 30px rgba(34, 197, 94, 0.1); position: relative; overflow: hidden; display: flex; flex-direction: column; justify-content: space-between;">
+                        <div style="position: absolute; top: 0; left: 0; width: 100%; height: 5px; background: #22c55e;"></div>
+                        <h4 style="color: #15803d; font-size: 24px; margin-top: 0; display: flex; align-items: center; gap: 10px; margin-bottom: 20px;">
+                            <i class="fas fa-users" style="background: #dcfce7; padding: 10px; border-radius: 50%;"></i> 
+                            Avec du Réseau
+                        </h4>
+                        
+                        <div style="flex-grow: 1; display: flex; flex-direction: column; gap: 15px;">
+                            <!-- Info 1 -->
+                            <div style="display: flex; gap: 10px; align-items: flex-start;">
+                                <i class="fas fa-binoculars" style="color: #22c55e; margin-top: 5px;"></i>
+                                <div style="font-size: 16px; color: var(--text-muted); text-align: left;">
+                                    <strong>Agent Immo (Veilleur) :</strong> "3 grosses boîtes viennent d'arriver à 500m, mais ils n'ont que 45min de pause."
+                                </div>
+                            </div>
+                            
+                            <!-- Info 2 -->
+                            <div style="display: flex; gap: 10px; align-items: flex-start;">
+                                <i class="fas fa-heartbeat" style="color: #22c55e; margin-top: 5px;"></i>
+                                <div style="font-size: 16px; color: var(--text-muted); text-align: left;">
+                                    <strong>Coach Sportif (Mentor) :</strong> "Ils veulent du 'healthy' rapide, pas un menu lourd qui endort."
+                                </div>
+                            </div>
+                        </div>
+
+                        <div style="background: #f0fdf4; padding: 15px; border-radius: 12px; border-left: 4px solid #22c55e; margin-top: 20px; text-align: left;">
+                            <strong style="color: #15803d; display: block; margin-bottom: 5px; font-size: 14px; text-transform: uppercase; letter-spacing: 1px;">RÉVÉLATION & ACTION :</strong>
+                            <div style="font-size: 16px; color: var(--text-main);">
+                                Le problème n'était pas le <strong>prix</strong>, mais le <strong>temps</strong> et la <strong>santé</strong>.
+                                <br>➔ Il lance un <strong>"Lunch Bowl Express"</strong> (10min).
+                                <br><strong style="color: #22c55e;">➔ Il cartonne et augmente sa marge.</strong>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+                <div style="text-align: center; margin-top: 40px; font-size: 28px; font-weight: 800; color: var(--secondary); opacity: 0; animation: fadeInUp 0.5s forwards 0.5s;">
+                    L'information, c'est de l'argent.
+                </div>
+
+            </div>
+
+        </div>
+        <div class="footer-info">04 / 14 — RÉALITÉ</div>
+    </div>
+
+    <!-- SLIDE 5: SOLUTION -->
+    <div class="slide-container" id="ecosystem-slide">
+        <h2 class="slide-title">La Solution : <span>L'Écosystème Popey</span></h2>
+        <div class="content-area" style="position:relative;">
+            <!-- Canvas for drawing connections -->
+            <svg class="connection-canvas" id="connection-svg"></svg>
+            <div id="connection-labels"></div>
+
+            <p class="animate-up delay-1" style="font-size: 24px; text-align:center; margin-bottom: 50px; color:var(--text-main);">
+                "Transformez vos voisins en <strong class="text-gradient">force de vente</strong> qualifiée."
+            </p>
+            <div class="grid-3 animate-up delay-2" style="grid-template-columns: repeat(5, 1fr); gap: 15px;">
+                <div class="card ecosystem-card" id="card-habitat" style="text-align:center; padding: 20px; align-items:center; border-bottom: 4px solid #84cc16;">
+                    <i class="fas fa-home" style="font-size:40px; color:#84cc16; margin-bottom:15px;"></i>
+                    <strong style="font-size:18px;">Habitat</strong>
+                </div>
+                <div class="card ecosystem-card" id="card-digital" style="text-align:center; padding: 20px; align-items:center; border-bottom: 4px solid #3b82f6;">
+                    <i class="fas fa-laptop" style="font-size:40px; color:#3b82f6; margin-bottom:15px;"></i>
+                    <strong style="font-size:18px;">Digital</strong>
+                </div>
+                <div class="card ecosystem-card" id="card-sante" style="text-align:center; padding: 20px; align-items:center; border-bottom: 4px solid #10b981;">
+                    <i class="fas fa-heart" style="font-size:40px; color:#10b981; margin-bottom:15px;"></i>
+                    <strong style="font-size:18px;">Santé</strong>
+                </div>
+                <div class="card ecosystem-card" id="card-conseil" style="text-align:center; padding: 20px; align-items:center; border-bottom: 4px solid #8b5cf6;">
+                    <i class="fas fa-gavel" style="font-size:40px; color:#8b5cf6; margin-bottom:15px;"></i>
+                    <strong style="font-size:18px;">Conseil</strong>
+                </div>
+                <div class="card ecosystem-card" id="card-retail" style="text-align:center; padding: 20px; align-items:center; border-bottom: 4px solid #ec4899;">
+                    <i class="fas fa-store" style="font-size:40px; color:#ec4899; margin-bottom:15px;"></i>
+                    <strong style="font-size:18px;">Retail</strong>
+                </div>
+            </div>
+            <div class="animate-up delay-3" style="margin-top: 40px; text-align: center;">
+                <span class="badge" style="background: rgba(0,0,0,0.05); border-color: rgba(0,0,0,0.1); color: var(--text-main);">100% Complémentaire — 0% Concurrence</span>
+            </div>
+            
+            <!-- Hidden fragment trigger for animation -->
+            <div class="fragment" id="trigger-connection-anim"></div>
+        </div>
+        <div class="footer-info">05 / 14 — SOLUTION</div>
+    </div>
+
+    <!-- SLIDE 6: DOMINO -->
+    <div class="slide-container">
+        <h2 class="slide-title">L'Effet <span>Domino</span> : Multipliez votre CA</h2>
+        
+        <div class="domino-layout">
+            <!-- Sidebar -->
+            <div class="domino-sidebar">
+                <div class="domino-sidebar-btn active" onclick="selectDominoScenario('scenario-habitat', this)">
+                    <i class="fas fa-home"></i> Habitat
+                </div>
+                <div class="domino-sidebar-btn" onclick="selectDominoScenario('scenario-sante', this)">
+                    <i class="fas fa-heart"></i> Santé
+                </div>
+                <div class="domino-sidebar-btn" onclick="selectDominoScenario('scenario-digital', this)">
+                    <i class="fas fa-laptop"></i> Digital
+                </div>
+                <div class="domino-sidebar-btn" onclick="selectDominoScenario('scenario-conseil', this)">
+                    <i class="fas fa-gavel"></i> Conseil
+                </div>
+                <div class="domino-sidebar-btn" onclick="selectDominoScenario('scenario-retail', this)">
+                    <i class="fas fa-store"></i> Retail
+                </div>
+            </div>
+
+            <!-- Stage -->
+            <div class="domino-stage">
+                <div style="text-align:center; margin-bottom:20px;">
+                    <p style="font-size:20px; color:var(--text-main); font-style:italic;">"Une seule vente déclenche une réaction en chaîne."</p>
+                </div>
+
+                <!-- Scenario 1: Habitat -->
+                <div id="scenario-habitat" class="domino-scenario active">
+                    <div class="domino-container">
+                        <div class="domino-card" id="domino-h-1">
+                            <div class="domino-card-header"></div>
+                            <div class="domino-icon"><i class="fas fa-home"></i></div>
+                            <div class="domino-content">
+                                <div class="domino-role">Agent Immo</div>
+                                <div class="domino-value">10 000 €</div>
+                            </div>
+                        </div>
+                        <div class="domino-card" id="domino-h-2">
+                            <div class="domino-card-header"></div>
+                            <div class="domino-icon"><i class="fas fa-drafting-compass"></i></div>
+                            <div class="domino-content">
+                                <div class="domino-role">Architecte</div>
+                                <div class="domino-value">5 000 €</div>
+                            </div>
+                        </div>
+                        <div class="domino-card" id="domino-h-3">
+                            <div class="domino-card-header"></div>
+                            <div class="domino-icon"><i class="fas fa-hard-hat"></i></div>
+                            <div class="domino-content">
+                                <div class="domino-role">Artisans</div>
+                                <div class="domino-value">50 000 €</div>
+                            </div>
+                        </div>
+                        <div class="domino-card" id="domino-h-4">
+                            <div class="domino-card-header"></div>
+                            <div class="domino-icon"><i class="fas fa-couch"></i></div>
+                            <div class="domino-content">
+                                <div class="domino-role">Décoration</div>
+                                <div class="domino-value">15 000 €</div>
+                            </div>
+                        </div>
+                        <div class="domino-card" id="domino-h-5">
+                            <div class="domino-card-header"></div>
+                            <div class="domino-icon"><i class="fas fa-leaf"></i></div>
+                            <div class="domino-content">
+                                <div class="domino-role">Paysagiste</div>
+                                <div class="domino-value">20 000 €</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Scenario 2: Santé -->
+                <div id="scenario-sante" class="domino-scenario">
+                    <div class="domino-container">
+                        <div class="domino-card" id="domino-s-1">
+                            <div class="domino-card-header"></div>
+                            <div class="domino-icon"><i class="fas fa-user-md"></i></div>
+                            <div class="domino-content">
+                                <div class="domino-role">Ostéopathe</div>
+                                <div class="domino-value">60 €</div>
+                            </div>
+                        </div>
+                        <div class="domino-card" id="domino-s-2">
+                            <div class="domino-card-header"></div>
+                            <div class="domino-icon"><i class="fas fa-running"></i></div>
+                            <div class="domino-content">
+                                <div class="domino-role">Coach Sportif</div>
+                                <div class="domino-value">500 €</div>
+                            </div>
+                        </div>
+                        <div class="domino-card" id="domino-s-3">
+                            <div class="domino-card-header"></div>
+                            <div class="domino-icon"><i class="fas fa-carrot"></i></div>
+                            <div class="domino-content">
+                                <div class="domino-role">Nutritionniste</div>
+                                <div class="domino-value">300 €</div>
+                            </div>
+                        </div>
+                        <div class="domino-card" id="domino-s-4">
+                            <div class="domino-card-header"></div>
+                            <div class="domino-icon"><i class="fas fa-spa"></i></div>
+                            <div class="domino-content">
+                                <div class="domino-role">Naturopathe</div>
+                                <div class="domino-value">200 €</div>
+                            </div>
+                        </div>
+                        <div class="domino-card" id="domino-s-5">
+                            <div class="domino-card-header"></div>
+                            <div class="domino-icon"><i class="fas fa-leaf"></i></div>
+                            <div class="domino-content">
+                                <div class="domino-role">Magasin Bio</div>
+                                <div class="domino-value">1 000 €</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Scenario 3: Digital -->
+                <div id="scenario-digital" class="domino-scenario">
+                    <div class="domino-container">
+                        <div class="domino-card" id="domino-d-1">
+                            <div class="domino-card-header"></div>
+                            <div class="domino-icon"><i class="fas fa-paint-brush"></i></div>
+                            <div class="domino-content">
+                                <div class="domino-role">Webdesigner</div>
+                                <div class="domino-value">2 000 €</div>
+                            </div>
+                        </div>
+                        <div class="domino-card" id="domino-d-2">
+                            <div class="domino-card-header"></div>
+                            <div class="domino-icon"><i class="fas fa-search"></i></div>
+                            <div class="domino-content">
+                                <div class="domino-role">Expert SEO</div>
+                                <div class="domino-value">1 500 €</div>
+                            </div>
+                        </div>
+                        <div class="domino-card" id="domino-d-3">
+                            <div class="domino-card-header"></div>
+                            <div class="domino-icon"><i class="fas fa-pen-nib"></i></div>
+                            <div class="domino-content">
+                                <div class="domino-role">Copywriter</div>
+                                <div class="domino-value">800 €</div>
+                            </div>
+                        </div>
+                        <div class="domino-card" id="domino-d-4">
+                            <div class="domino-card-header"></div>
+                            <div class="domino-icon"><i class="fas fa-camera"></i></div>
+                            <div class="domino-content">
+                                <div class="domino-role">Photographe</div>
+                                <div class="domino-value">500 €</div>
+                            </div>
+                        </div>
+                        <div class="domino-card" id="domino-d-5">
+                            <div class="domino-card-header"></div>
+                            <div class="domino-icon"><i class="fas fa-hashtag"></i></div>
+                            <div class="domino-content">
+                                <div class="domino-role">Community Mgr</div>
+                                <div class="domino-value">1 200 €</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Scenario 4: Conseil -->
+                <div id="scenario-conseil" class="domino-scenario">
+                    <div class="domino-container">
+                        <div class="domino-card" id="domino-c-1">
+                            <div class="domino-card-header"></div>
+                            <div class="domino-icon"><i class="fas fa-calculator"></i></div>
+                            <div class="domino-content">
+                                <div class="domino-role">Comptable</div>
+                                <div class="domino-value">3 000 €</div>
+                            </div>
+                        </div>
+                        <div class="domino-card" id="domino-c-2">
+                            <div class="domino-card-header"></div>
+                            <div class="domino-icon"><i class="fas fa-balance-scale"></i></div>
+                            <div class="domino-content">
+                                <div class="domino-role">Avocat</div>
+                                <div class="domino-value">2 500 €</div>
+                            </div>
+                        </div>
+                        <div class="domino-card" id="domino-c-3">
+                            <div class="domino-card-header"></div>
+                            <div class="domino-icon"><i class="fas fa-shield-alt"></i></div>
+                            <div class="domino-content">
+                                <div class="domino-role">Assureur</div>
+                                <div class="domino-value">1 500 €</div>
+                            </div>
+                        </div>
+                        <div class="domino-card" id="domino-c-4">
+                            <div class="domino-card-header"></div>
+                            <div class="domino-icon"><i class="fas fa-users-cog"></i></div>
+                            <div class="domino-content">
+                                <div class="domino-role">Consultant RH</div>
+                                <div class="domino-value">4 000 €</div>
+                            </div>
+                        </div>
+                        <div class="domino-card" id="domino-c-5">
+                            <div class="domino-card-header"></div>
+                            <div class="domino-icon"><i class="fas fa-user-tie"></i></div>
+                            <div class="domino-content">
+                                <div class="domino-role">Recruteur</div>
+                                <div class="domino-value">5 000 €</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Scenario 5: Retail -->
+                <div id="scenario-retail" class="domino-scenario">
+                    <div class="domino-container">
+                        <div class="domino-card" id="domino-r-1">
+                            <div class="domino-card-header"></div>
+                            <div class="domino-icon"><i class="fas fa-tshirt"></i></div>
+                            <div class="domino-content">
+                                <div class="domino-role">Boutique Mode</div>
+                                <div class="domino-value">200 €</div>
+                            </div>
+                        </div>
+                        <div class="domino-card" id="domino-r-2">
+                            <div class="domino-card-header"></div>
+                            <div class="domino-icon"><i class="fas fa-cut"></i></div>
+                            <div class="domino-content">
+                                <div class="domino-role">Coiffeur</div>
+                                <div class="domino-value">80 €</div>
+                            </div>
+                        </div>
+                        <div class="domino-card" id="domino-r-3">
+                            <div class="domino-card-header"></div>
+                            <div class="domino-icon"><i class="fas fa-gem"></i></div>
+                            <div class="domino-content">
+                                <div class="domino-role">Bijoutier</div>
+                                <div class="domino-value">300 €</div>
+                            </div>
+                        </div>
+                        <div class="domino-card" id="domino-r-4">
+                            <div class="domino-card-header"></div>
+                            <div class="domino-icon"><i class="fas fa-utensils"></i></div>
+                            <div class="domino-content">
+                                <div class="domino-role">Restaurateur</div>
+                                <div class="domino-value">120 €</div>
+                            </div>
+                        </div>
+                        <div class="domino-card" id="domino-r-5">
+                            <div class="domino-card-header"></div>
+                            <div class="domino-icon"><i class="fas fa-wine-glass"></i></div>
+                            <div class="domino-content">
+                                <div class="domino-role">Caviste</div>
+                                <div class="domino-value">50 €</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="total-value-display" id="totalDisplay">
+                    TOTAL : <span id="totalAmount">0 €</span>
+                </div>
+
+                <div style="text-align:center; margin-top:30px;">
+                    <button class="gm-btn" style="margin:0 auto; background:var(--primary); border:none; color:white;" onclick="triggerDominoEffect()">
+                        <i class="fas fa-play"></i> Lancer la réaction
+                    </button>
+                </div>
+            </div>
+        </div>
+        <div class="footer-info">06 / 14 — DOMINO</div>
+    </div>
+
+    <!-- SLIDE 7: GÉNÉRATEUR -->
+    <div class="slide-container" id="slide-synergy">
+        <h2 class="slide-title">Générateur de <span>Synergies</span></h2>
+        <div class="content-area" style="display:flex; flex-direction:column; align-items:center;">
+            
+            <div style="text-align:center; margin-bottom:30px; max-width:800px;">
+                <p style="font-size:24px; color:var(--text-main);">"Dites-nous qui vous êtes, nous vous dirons avec qui grandir."</p>
+            </div>
+
+            <!-- Input Section -->
+            <div class="synergy-input-container animate-up delay-1">
+                <input type="text" id="synergyInput" class="synergy-input" placeholder="Ex: Architecte, Coach Sportif, Avocat..." autocomplete="off">
+                <button class="synergy-btn" onclick="generateSynergies()"><i class="fas fa-magic"></i> Révéler</button>
+                <div id="synergySuggestions" class="synergy-suggestions"></div>
+            </div>
+
+            <!-- Results Container -->
+            <div class="synergy-results-wrapper">
+                <div class="carousel-btn prev" id="btnPrevResult" onclick="scrollResults(-1)"><i class="fas fa-chevron-left"></i></div>
+                
+                <div id="synergyResults" class="synergy-results-grid">
+                    <!-- Initial State: Empty or Placeholder -->
+                    <div style="width: 100%; text-align:center; color:var(--text-muted); margin-top:50px;">
+                        <i class="fas fa-network-wired" style="font-size:60px; opacity:0.2; margin-bottom:20px;"></i>
+                        <p>L'algorithme attend votre profession...</p>
+                    </div>
+                </div>
+
+                <div class="carousel-btn next" id="btnNextResult" onclick="scrollResults(1)"><i class="fas fa-chevron-right"></i></div>
+            </div>
+
+        </div>
+        <div class="footer-info">07 / 14 — GÉNÉRATEUR</div>
+    </div>
+
+    <!-- SLIDE 8: MATCH DU JOUR -->
+    <div class="slide-container">
+        <h2 class="slide-title">Comment ça marche ? <span>Le Match du Jour</span></h2>
+        
+        <div style="display:flex; justify-content:center; align-items:center; height:100%; gap: 60px;">
+            <img src="dashboard.png" class="dashboard-img" alt="Match du Jour">
+            
+            <div style="width:400px;">
+                <h3 style="color:var(--text-main); font-size:28px; margin-bottom:20px;">1 Match / Jour</h3>
+                <ul style="list-style:none; padding:0;">
+                    <li style="margin-bottom:20px; display:flex; align-items:flex-start; gap:15px;">
+                        <div style="width:30px; height:30px; background:var(--primary); border-radius:50%; display:flex; align-items:center; justify-content:center; color:white; font-weight:bold; flex-shrink:0;">1</div>
+                        <div style="color:var(--text-muted);">L'algorithme sélectionne <strong>le meilleur profil</strong> pour vous aujourd'hui.</div>
+                    </li>
+                    <li style="margin-bottom:20px; display:flex; align-items:flex-start; gap:15px;">
+                        <div style="width:30px; height:30px; background:var(--primary); border-radius:50%; display:flex; align-items:center; justify-content:center; color:white; font-weight:bold; flex-shrink:0;">2</div>
+                        <div style="color:var(--text-muted);">Appel de <strong>5 minutes</strong> pour échanger une opportunité.</div>
+                    </li>
+                    <li style="margin-bottom:20px; display:flex; align-items:flex-start; gap:15px;">
+                        <div style="width:30px; height:30px; background:var(--primary); border-radius:50%; display:flex; align-items:center; justify-content:center; color:white; font-weight:bold; flex-shrink:0;">3</div>
+                        <div style="color:var(--text-muted);">Pas de match ? Accédez au <strong>Marché</strong>.</div>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        <div class="footer-info">08 / 14 — MÉCANIQUE</div>
+    </div>
+
+    <!-- SLIDE 9: MARCHÉ -->
+    <div class="slide-container">
+        <h2 class="slide-title">Au <span>Marché</span> de la Communauté</h2>
+        <div style="text-align:center; margin-bottom:20px;">
+            <p style="font-size:20px; color:var(--text-main);">"Ne restez jamais bloqué. Puisez dans les opportunités partagées."</p>
+        </div>
+        
+        <div class="market-grid">
+            <!-- Card 1 -->
+            <div class="market-card animate-up delay-1">
+                <div class="market-credits"><i class="fas fa-coins"></i> 50</div>
+                <div class="market-tag tag-immo">Lead Qualifié - Immo</div>
+                <div class="market-quote">"Je cherche un architecte pour un projet de rénovation complète (120m²) à Bordeaux Centre. Budget validé."</div>
+                <div class="market-user">
+                    <div class="market-avatar">JL</div>
+                    <div style="font-size:12px; color:var(--text-muted);">Posté par <strong style="color:var(--secondary);">Julien L.</strong></div>
+                </div>
+                <button class="market-btn btn-unlock">Débloquer le contact</button>
+            </div>
+
+            <!-- Card 2 -->
+            <div class="market-card animate-up delay-2" style="border-color:rgba(239, 68, 68, 0.3);">
+                <div class="market-credits"><i class="fas fa-coins"></i> 150</div>
+                <div class="market-tag tag-btp">Intro Décideur - BTP</div>
+                <div class="market-quote">"Je déjeune demain avec le directeur des achats d'un grand groupe de construction. Je peux faire une intro."</div>
+                <div class="market-user">
+                    <div class="market-avatar" style="border-color:var(--danger); color:var(--danger);">MS</div>
+                    <div style="font-size:12px; color:var(--text-muted);">Posté par <strong style="color:var(--secondary);">Marc S.</strong></div>
+                </div>
+                <button class="market-btn btn-reserve">Réserver l'intro</button>
+                <div style="position:absolute; top:10px; left:-30px; background:var(--danger); color:#fff; font-size:10px; padding:2px 30px; transform:rotate(-45deg); font-weight:bold;">RARE</div>
+            </div>
+
+            <!-- Card 3 -->
+            <div class="market-card animate-up delay-3">
+                <div class="market-credits"><i class="fas fa-coins"></i> 30</div>
+                <div class="market-tag tag-linkedin">Visibilité - LinkedIn</div>
+                <div class="market-quote">"Je cherche un expert en marketing pour intervenir dans mon prochain live (5k abonnés). Sujet : Acquisition."</div>
+                <div class="market-user">
+                    <div class="market-avatar" style="border-color:var(--secondary); color:var(--secondary);">CL</div>
+                    <div style="font-size:12px; color:var(--text-muted);">Posté par <strong style="color:var(--secondary);">Chloé L.</strong></div>
+                </div>
+                <button class="market-btn btn-apply">Postuler</button>
+            </div>
+        </div>
+
+        <div style="text-align:center; margin-top:30px;">
+            <p style="color:var(--text-muted); font-size:14px; margin-bottom:15px;">Plus de 50 nouvelles opportunités postées chaque semaine par les membres.</p>
+            <button class="gm-btn" style="margin:0 auto;"><i class="fas fa-shopping-basket"></i> Accéder au Marché</button>
+        </div>
+
+        <div class="footer-info">09 / 14 — MARCHÉ</div>
+    </div>
+
+    <!-- SLIDE 10: RÉPUTATION -->
+    <div class="slide-container">
+        <h2 class="slide-title">Votre <span>Réputation</span> : Actif Précieux</h2>
+        
+        <div class="grid-2" style="align-items:center;">
+            <div class="animate-up delay-1">
+                <h3 style="font-size:32px; color:var(--secondary); margin-bottom:20px;">Fini les "je te rappelle".</h3>
+                <p style="font-size:18px; line-height:1.6; color:var(--text-muted); margin-bottom:30px;">
+                    Sur Mon Réseau Local, tout est mesuré. La fiabilité est la seule monnaie qui compte vraiment.
+                </p>
+                
+                <div style="background:rgba(0,0,0,0.05); padding:20px; border-radius:16px; border-left:4px solid var(--primary); margin-bottom:20px;">
+                    <h4 style="color:var(--primary); margin-bottom:5px;">Hiérarchie de Qualité</h4>
+                    <p style="font-size:14px; color:var(--text-muted); margin:0;">Plus vous jouez le jeu (réponses rapides, leads qualifiés), plus l'algorithme vous matche avec les membres 'Elite'.</p>
+                </div>
+
+                <div style="background:rgba(0,0,0,0.05); padding:20px; border-radius:16px; border-left:4px solid var(--secondary);">
+                    <h4 style="color:var(--secondary); margin-bottom:5px;">Accès Privilégié</h4>
+                    <p style="font-size:14px; color:var(--text-muted); margin:0;">Un score de <strong style="color:var(--primary);">4.5/5</strong> vous donne accès aux décideurs les plus influents de la région.</p>
+                </div>
+            </div>
+
+            <div class="animate-up delay-2" style="display:flex; justify-content:center;">
+                <div class="card" style="width:320px; text-align:center; padding:40px 20px; background:#fff; border:3px solid var(--secondary); box-shadow: 10px 10px 0 rgba(0,0,0,0.1); border-radius: 24px;">
+                    <div class="match-avatar-large" style="width:100px; height:100px; margin: 0 auto 20px auto; border: 3px solid var(--secondary);"></div>
+                    <h3 style="font-size:24px; color:var(--secondary); margin-bottom:5px; font-weight:800;">Votre Score</h3>
+                    <div class="rep-stars" style="color: #fbbf24; margin-bottom: 10px; font-size: 20px;">
+                        <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star-half-alt"></i>
+                    </div>
+                    <div style="font-size:48px; font-weight:900; color:var(--primary); margin-bottom:10px; font-family:'Urbanist';">4.8<span style="font-size:20px; color:var(--text-muted);">/5</span></div>
+                    <div style="font-size:12px; color:var(--primary); background:rgba(153, 27, 27, 0.05); padding:5px 15px; border-radius:50px; display:inline-block; margin-bottom:20px; font-weight:800; border: 1px solid rgba(153, 27, 27, 0.1);">Top 5% des membres</div>
+                    
+                    <div style="border-top:2px solid rgba(0,0,0,0.05); padding-top:20px; margin-top:10px;">
+                        <div style="display:flex; justify-content:space-between; margin-bottom:10px;">
+                            <span style="color:var(--text-muted); font-size:12px; font-weight:700; text-transform:uppercase;">Fiabilité</span>
+                            <span style="color:var(--secondary); font-size:14px; font-weight:900;">100%</span>
+                        </div>
+                        <div style="width:100%; height:8px; background:rgba(0,0,0,0.05); border-radius:10px; border: 1px solid rgba(0,0,0,0.05);">
+                            <div style="width:100%; height:100%; background:var(--primary); border-radius:10px;"></div>
+                        </div>
+                        
+                        <div style="display:flex; justify-content:space-between; margin-bottom:10px; margin-top:20px;">
+                            <span style="color:var(--text-muted); font-size:12px; font-weight:700; text-transform:uppercase;">Qualité des Leads</span>
+                            <span style="color:var(--secondary); font-size:14px; font-weight:900;">4.9/5</span>
+                        </div>
+                        <div style="width:100%; height:8px; background:rgba(0,0,0,0.05); border-radius:10px; border: 1px solid rgba(0,0,0,0.05);">
+                            <div style="width:95%; height:100%; background:var(--secondary); border-radius:10px;"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="footer-info">10 / 14 — RÉPUTATION</div>
+    </div>
+
+    <!-- SLIDE 11: OBJECTIFS -->
+    <div class="slide-container">
+        <h2 class="slide-title">Notre Objectif : <span>Grandir Ensemble</span></h2>
+        <div class="content-area">
+            <div style="margin-bottom: 30px; text-align: center;">
+                <p style="font-size: 20px; color: var(--text-main);">"Ces résultats ne sont pas une promesse, c'est le but que nous atteindrons <strong class="text-gradient">grâce à vous</strong>."</p>
+            </div>
+            <div class="grid-2">
+                <!-- Left Col: Bars -->
+                <div style="padding-right: 20px;">
+                    <div class="stat-container animate-up delay-1" style="margin-bottom: 30px;">
+                        <div class="stat-label">
+                            <span>Objectif Survie (3 ans)</span>
+                            <span style="color:var(--primary);">95%</span>
+                        </div>
+                        <div class="stat-bar-bg"><div class="stat-bar-fill" data-width="95%"></div></div>
+                        <div style="font-size:12px; color:var(--text-muted); margin-top:5px; text-align:right;">Contre 51% seul</div>
+                    </div>
+
+                    <div class="stat-container animate-up delay-2" style="margin-bottom: 30px;">
+                        <div class="stat-label">
+                            <span>Objectif Synergie</span>
+                            <span style="color:var(--secondary);">78%</span>
+                        </div>
+                        <div class="stat-bar-bg"><div class="stat-bar-fill" style="background: linear-gradient(90deg, var(--secondary), #8b5cf6);" data-width="78%"></div></div>
+                        <div style="font-size:12px; color:var(--text-muted); margin-top:5px; text-align:right;">Membres actifs</div>
+                    </div>
+
+                    <div class="stat-container animate-up delay-3">
+                        <div class="stat-label">
+                            <span>Objectif Soutien</span>
+                            <span style="color:var(--danger);">100%</span>
+                        </div>
+                        <div class="stat-bar-bg"><div class="stat-bar-fill" style="background: linear-gradient(90deg, #f87171, var(--danger));" data-width="100%"></div></div>
+                        <div style="font-size:12px; color:var(--text-muted); margin-top:5px; text-align:right;">Fin de l'isolement</div>
+                    </div>
+                </div>
+
+                <!-- Right Col: Big Card -->
+                <div class="card animate-up delay-4" style="display:flex; flex-direction:column; justify-content:center; align-items:center; text-align:center; border-color:var(--primary); background: rgba(132, 204, 22, 0.05); height: 100%;">
+                    <div class="icon-box" style="background: rgba(132, 204, 22, 0.2); color: var(--primary); width: 80px; height: 80px; font-size: 32px; border-radius: 50%; margin-bottom: 20px;"><i class="fas fa-rocket"></i></div>
+                    <p style="margin:0; text-transform:uppercase; font-size:16px; font-weight:700; color:var(--text-muted); letter-spacing: 1px;">Gain Cible Moyen</p>
+                    <div style="font-size: 60px; font-weight:800; color:var(--primary); font-family:'Urbanist'; margin: 10px 0;">+ 3 500 €</div>
+                    <p style="margin:0; font-size:18px; color:var(--text-main);">de CA additionnel / trimestre</p>
+                </div>
+            </div>
+        </div>
+        <div class="footer-info">11 / 14 — OBJECTIFS</div>
+    </div>
+
+    <!-- SLIDE 12: OFFRE CCI (NEW) -->
+    <div class="slide-container">
+        <div style="display:flex; flex-direction:column; justify-content:center; align-items:center; height:100%; text-align:center;">
+            <div class="animate-up delay-1" style="font-size:16px; color:var(--primary); text-transform:uppercase; letter-spacing:4px; margin-bottom:20px; font-weight:800;">Offre Exclusive</div>
+            <h2 class="animate-up delay-2" style="font-size: 50px; color:var(--secondary); margin-bottom:60px; max-width:900px;">Réservée aux membres CCI</h2>
+            
+            <div class="animate-up delay-3" style="display:flex; justify-content:center; align-items:center; gap:80px;">
+                <!-- Public Price -->
+                <div style="opacity:0.4; transform: scale(0.9); text-align:center;">
+                    <div style="font-size:20px; text-transform:uppercase; margin-bottom:15px; color:var(--text-muted);">Prix Public</div>
+                    <div style="font-size:70px; font-weight:800; text-decoration:line-through; color:var(--text-muted); line-height:1;">79€</div>
+                    <div style="font-size:20px; color:var(--text-muted);">/ mois</div>
+                </div>
+
+                <!-- Arrow -->
+                <div style="font-size:40px; color:var(--primary); opacity:0.8;"><i class="fas fa-arrow-right"></i></div>
+
+                <!-- CCI Price -->
+                <div style="background:#fff; padding:30px; border-radius:30px; border:3px solid var(--secondary); box-shadow:15px 15px 0px rgba(0,0,0,0.1); transform: scale(1.05); position:relative; min-width: 380px;">
+                    
+                    <!-- THE BIG GIFT -->
+                    <div style="font-size:55px; font-weight:900; color:var(--primary); line-height:1.1; text-shadow:2px 2px 0px rgba(0,0,0,0.1); animation: pulseGlow 2s infinite;">
+                        1<span style="font-size:30px; vertical-align:super;">er</span> MOIS<br>OFFERT
+                    </div>
+                    
+                    <div style="width:100%; height:2px; background:var(--text-muted); opacity:0.1; margin:20px 0;"></div>
+
+                    <!-- THE PRICE AFTER -->
+                    <div style="display:flex; flex-direction:column; align-items:center;">
+                        <div style="font-size:14px; text-transform:uppercase; color:var(--text-muted); letter-spacing:2px; margin-bottom:5px;">Puis tarif spécial CCI</div>
+                        <div style="display:flex; align-items:baseline; gap:10px;">
+                            <div style="font-size:45px; font-weight:800; color:var(--secondary);">49€</div>
+                            <div style="font-size:18px; color:var(--text-muted);">/ mois</div>
+                        </div>
+                        <div style="font-size:13px; color:var(--text-muted); margin-top:5px; display:flex; align-items:center; gap:5px;">
+                            <i class="fas fa-unlock" style="color:var(--primary);"></i> Sans engagement
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="footer-info">12 / 14 — OFFRE SPÉCIALE</div>
+    </div>
+
+    <!-- SLIDE 13: CONCLUSION (Was 12) -->
+    <div class="slide-container" style="background: linear-gradient(rgba(15, 23, 42, 0.8), rgba(15, 23, 42, 0.8)), url('https://images.unsplash.com/photo-1556761175-5973dc0f32e7?ixlib=rb-4.0.3&auto=format&fit=crop&w=1600&q=80'); background-size: cover; border: 1px solid var(--primary);">
+        <div style="display:flex; flex-direction:column; justify-content:center; align-items:center; height:100%; text-align:center;">
+            <i class="fas fa-quote-left animate-up delay-1" style="font-size: 50px; color: var(--primary); margin-bottom: 30px;"></i>
+            <h2 class="animate-up delay-2" style="font-size: 55px; color:#fff; border:none; margin-bottom:30px; font-weight:800; text-shadow: 0 10px 30px rgba(0,0,0,0.5); line-height:1.2;">
+                "Faisons de Dax la capitale<br>de la solidarité business."
+            </h2>
+            <p class="animate-up delay-3" style="font-size: 24px; color:#e2e8f0; max-width:800px; font-weight:400;">
+                Ne laissons plus nos talents s'épuiser seuls.<br>Offrons-leur l'écosystème qu'ils méritent.
+            </p>
+            <div class="badge animate-up delay-4" style="font-size: 20px; padding: 15px 40px; margin-top:50px; background: var(--primary); color: #0f172a; border:none; box-shadow: 0 0 20px var(--primary-glow);">
+                ENSEMBLE, PLUS FORTS.
+            </div>
+        </div>
+        <div class="footer-info">13 / 14 — VISION</div>
+    </div>
+
+    <!-- SLIDE 14: CONTACT & QR CODE (Was 13) -->
+    <div class="slide-container">
+        <div style="display:flex; flex-direction:column; justify-content:center; align-items:center; height:100%;">
+            <div class="animate-up delay-1" style="text-align:center; margin-bottom:40px;">
+                <h1 style="font-size: 60px; margin-bottom: 10px; color:var(--secondary);">C'est parti ?</h1>
+                <p style="font-size: 20px; color:var(--text-muted);">Scannez pour valider votre avantage CCI</p>
+            </div>
+            
+            <div class="animate-up delay-2" style="background: white; padding: 20px; border-radius: 20px; box-shadow: 0 0 100px rgba(132, 204, 22, 0.3); margin-bottom: 40px;">
+                <div id="qrcode"></div>
+            </div>
+
+            <div class="animate-up delay-3" style="display:flex; gap: 60px; align-items:center;">
+                <div style="text-align:right;">
+                    <p style="font-size: 24px; color:var(--primary); font-weight:700; margin-bottom:5px;">Jean-Philippe</p>
+                    <p style="font-size: 14px; color:var(--text-muted); text-transform:uppercase; letter-spacing:2px;">Fondateur Popey</p>
+                </div>
+                <div style="width:1px; height:40px; background:rgba(0,0,0,0.1);"></div>
+                <div style="text-align:left;">
+                    <div style="font-size:18px; color:var(--text-main); font-weight:600; margin-bottom:5px;">contact@popey.academy</div>
+                    <div style="font-size:18px; color:var(--text-main); font-weight:600;">07 68 23 33 47</div>
+                </div>
+            </div>
+        </div>
+        <div class="footer-info">14 / 14 — CONTACT</div>
+    </div>
+    
+    <!-- Challenge Card -->
+    <div class="challenge-card" id="challengeCard">
+        <button class="close-challenge-btn" onclick="toggleChallenge(false)"><i class="fas fa-times"></i></button>
+        <div class="challenge-header">Le Défi du Slide</div>
+        <div class="challenge-question" id="challengeQuestion">La solitude du dirigeant est-elle une fatalité ?</div>
+        <div class="challenge-roles">
+            <div class="role-box" style="position: relative;">
+                <div style="position: absolute; top: -15px; left: 50%; transform: translateX(-50%); background: #fff; padding: 5px 15px; border-radius: 20px; border: 2px solid var(--secondary); color: var(--secondary); font-size: 12px; font-weight:800; display: flex; align-items: center; gap: 5px; box-shadow: 2px 2px 0 rgba(0,0,0,0.05);">
+                    <i class="fas fa-hand-paper"></i> Option A
+                </div>
+                <div class="role-desc" id="role1Desc">"Je décide seul car je suis le seul à avoir la vision."</div>
+            </div>
+            <div class="vs-badge">OU</div>
+            <div class="role-box" style="position: relative;">
+                <div style="position: absolute; top: -15px; left: 50%; transform: translateX(-50%); background: #fff; padding: 5px 15px; border-radius: 20px; border: 2px solid var(--secondary); color: var(--secondary); font-size: 12px; font-weight:800; display: flex; align-items: center; gap: 5px; box-shadow: 2px 2px 0 rgba(0,0,0,0.05);">
+                    <i class="fas fa-hand-paper"></i> Option B
+                </div>
+                <div class="role-desc" id="role2Desc">"L'intelligence collective rapporte plus qu'elle ne coûte."</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Global Footer Info (Fixed) -->
+    <div id="globalFooterInfo"></div>
+
+    <!-- Game Master Controls -->
+    <div class="gm-controls">
+        <button class="gm-btn" onclick="spinRoulette()"><i class="fas fa-dice"></i> Roulette</button>
+        <button class="gm-btn active" id="btn-challenge" onclick="toggleChallenge()"><i class="fas fa-question-circle"></i> Défi</button>
+    </div>
+
+    <!-- Roulette Overlay -->
+    <div class="roulette-overlay" id="rouletteOverlay">
+        <button class="close-challenge-btn" style="top: 30px; right: 30px; font-size: 30px;" onclick="closeRoulette()"><i class="fas fa-times"></i></button>
+        
+        <!-- MODE 1: NUMBERS (SEATS) -->
+        <div id="roulette-mode-seats" style="display:none; flex-direction:column; align-items:center;">
+            <h2 style="font-size: 50px; margin-bottom: 50px; text-transform: uppercase; color: var(--secondary); text-shadow: 2px 2px 0 rgba(255,255,255,0.5);">À vous de jouer !</h2>
+            <div class="roulette-box" style="background: #fff; border: 4px solid var(--secondary); box-shadow: 10px 10px 0 rgba(0,0,0,0.2);">
+                <div class="roulette-seat" style="border-color: var(--secondary);">
+                    <div class="seat-number" id="seat1" style="color: var(--secondary);">?</div>
+                    <div class="seat-label" style="color: var(--text-muted);">Siège</div>
+                </div>
+                <div style="font-size: 60px; color: var(--text-muted); align-self: center;">&</div>
+                <div class="roulette-seat" style="border-color: var(--primary); box-shadow: none;">
+                    <div class="seat-number" id="seat2" style="color: var(--primary);">?</div>
+                    <div class="seat-label" style="color: var(--text-muted);">Siège</div>
+                </div>
+            </div>
+            <p style="font-size: 20px; color: var(--text-muted); margin-top:30px; background: rgba(255,255,255,0.8); padding: 5px 15px; border-radius: 20px;">Cliquez pour fermer</p>
+        </div>
+
+        <!-- MODE 2: JOBS (SLOT MACHINE) -->
+        <div id="roulette-mode-jobs" style="display:none; flex-direction:column; align-items:center;">
+            <h2 style="font-size: 40px; margin-bottom: 10px; text-transform: uppercase; color: var(--secondary); text-shadow: 2px 2px 0 rgba(255,255,255,0.5);">Le Hasard fait-il bien les choses ?</h2>
+            <p style="color: var(--text-muted); font-size: 20px; margin-bottom: 50px; background: rgba(255,255,255,0.8); padding: 5px 15px; border-radius: 20px;">Sélection aléatoire d'un métier dans la salle</p>
+
+            <div class="roulette-machine-container" style="background: #fff; border: 4px solid var(--secondary); box-shadow: 10px 10px 0 rgba(0,0,0,0.2);">
+                <div class="roulette-window" style="background: #f1f5f9; border-color: var(--secondary);">
+                    <div class="roulette-strip" id="rouletteStrip">
+                        <!-- JS will populate this -->
+                    </div>
+                    <div class="roulette-highlight" style="border-color: var(--primary); background: rgba(132, 204, 22, 0.1);"></div>
+                </div>
+                <div class="roulette-lever" onclick="spinRealRoulette()">
+                    <div class="lever-handle" style="background: var(--primary); box-shadow: 0 5px 0 #65a30d;"></div>
+                    <div class="lever-stick" style="background: var(--secondary);"></div>
+                    <div class="lever-base" style="background: var(--secondary);"></div>
+                </div>
+            </div>
+
+            <div id="rouletteResult" class="roulette-result">
+                <div class="result-label" style="color: var(--text-muted);">Le sort a désigné :</div>
+                <div class="result-job" id="resultJobText" style="color: var(--secondary); text-shadow: none;">...</div>
+                <button class="gm-btn" style="margin-top: 20px; background: var(--primary); color: #fff; font-size: 18px; border-color: var(--secondary);" onclick="useRouletteResult()">
+                    <i class="fas fa-check"></i> Tester ce métier
+                </button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Timer Display -->
+    <div class="timer-display" id="timerDisplay">00:30</div>
+
+    <!-- Controls -->
+    <div class="controls-overlay">
+        <div class="control-btn" onclick="prevSlide()" title="Précédent"><i class="fas fa-arrow-left"></i></div>
+        <div class="control-btn" onclick="nextSlide()" title="Suivant"><i class="fas fa-arrow-right"></i></div>
+        <div class="control-btn" onclick="toggleFullScreen()" title="Plein écran"><i class="fas fa-expand"></i></div>
+    </div>
+
+    <!-- Progress Bar -->
+    <div class="progress-bar" id="progressBar"></div>
+
+</div>
+
+<script src="js/synergy-data.js"></script>
+<script src="js/synergy-logic.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<script>
+    // --- NETWORK BACKGROUND ANIMATION ---
+    const canvas = document.getElementById('network-canvas');
+    const ctx = canvas.getContext('2d');
+    let width, height;
+    let particles = [];
+    
+    function resizeCanvas() {
+        width = canvas.width = window.innerWidth;
+        height = canvas.height = window.innerHeight;
+    }
+    window.addEventListener('resize', resizeCanvas);
+    resizeCanvas();
+
+    class Particle {
+        constructor() {
+            this.x = Math.random() * width;
+            this.y = Math.random() * height;
+            this.vx = (Math.random() - 0.5) * 0.5; // Very slow
+            this.vy = (Math.random() - 0.5) * 0.5;
+            this.size = Math.random() * 2 + 1;
+        }
+        update() {
+            this.x += this.vx;
+            this.y += this.vy;
+            if (this.x < 0 || this.x > width) this.vx *= -1;
+            if (this.y < 0 || this.y > height) this.vy *= -1;
+        }
+        draw() {
+            ctx.fillStyle = 'rgba(132, 204, 22, 0.5)'; // Primary color dots
+            ctx.beginPath();
+            ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+            ctx.fill();
+        }
+    }
+
+    function initParticles() {
+        particles = [];
+        for (let i = 0; i < 60; i++) particles.push(new Particle()); // Fewer particles for subtlety
+    }
+
+    function animateParticles() {
+        ctx.clearRect(0, 0, width, height);
+        particles.forEach((p, index) => {
+            p.update();
+            p.draw();
+            // Draw connections
+            for (let j = index + 1; j < particles.length; j++) {
+                const p2 = particles[j];
+                const dx = p.x - p2.x;
+                const dy = p.y - p2.y;
+                const dist = Math.sqrt(dx*dx + dy*dy);
+                if (dist < 150) {
+                    ctx.strokeStyle = `rgba(132, 204, 22, ${0.15 - dist/1000})`; // Faint lines
+                    ctx.lineWidth = 1;
+                    ctx.beginPath();
+                    ctx.moveTo(p.x, p.y);
+                    ctx.lineTo(p2.x, p2.y);
+                    ctx.stroke();
+                }
+            }
+        });
+        requestAnimationFrame(animateParticles);
+    }
+    initParticles();
+    animateParticles();
+
+    // --- PRESENTATION LOGIC ---
+    let currentSlideIndex = 0;
+    let connectionAnimTimeout = null;
+    const slides = document.querySelectorAll('.slide-container');
+    const progressBar = document.getElementById('progressBar');
+    const wrapper = document.getElementById('wrapper');
+
+    // Initialize
+    updateProgress();
+    
+    // Init Footer
+    const initSlide = slides[0];
+    const initFooterSource = initSlide.querySelector('.footer-info');
+    const globalFooterInit = document.getElementById('globalFooterInfo');
+    if (initFooterSource && globalFooterInit) {
+        globalFooterInit.innerHTML = initFooterSource.innerHTML;
+    }
+
+    // Scale function to fit slides on smaller screens
+    function resizeSlides() {
+        const baseWidth = 1200;
+        const baseHeight = 680;
+        const padding = 40;
+        
+        const scaleX = (window.innerWidth - padding) / baseWidth;
+        const scaleY = (window.innerHeight - padding) / baseHeight;
+        const scale = Math.min(scaleX, scaleY, 1); 
+        
+        slides.forEach(slide => {
+            slide.style.transform = `scale(${scale})`;
+        });
+    }
+
+    window.addEventListener('resize', resizeSlides);
+    resizeSlides(); // Initial call
+
+    // Game Master Logic
+    let isRevealed = false;
+    let timerInterval = null;
+
+    // Scenarios for each slide
+    const slideChallenges = [
+        // Slide 1: Accueil
+        {
+            q: "Si vous deviez résumer l'économie locale en 1 mot ?",
+            r1: "Le Pessimiste : 'C'est mort, tout se passe à Bordeaux.'",
+            r2: "L'Optimiste : 'Tout est à construire ici.'"
+        },
+        // Slide 2: Diagnostic
+        {
+            q: "La solitude du dirigeant : Fatalité ou Choix ?",
+            r1: "L'Avocat du Diable : 'Je suis seul car personne ne peut comprendre mes enjeux.'",
+            r2: "Le Visionnaire : 'Je suis seul car je n'ai pas construit de cercle.'"
+        },
+        // Slide 3: Anatomie Echec
+        {
+            q: "Pourquoi 1 boîte sur 2 ferme avant 5 ans ?",
+            r1: "La Victime : 'C'est la faute des charges et de la conjoncture.'",
+            r2: "Le Lucide : 'C'est la faute de l'isolement commercial.'"
+        },
+        // Slide 4: Réalité (New)
+        {
+            q: "Comment réagir face à une baisse d'activité ?",
+            r1: "Le Solitaire : 'Je baisse mes prix pour attirer du monde.'",
+            r2: "Le Connecté : 'J'interroge mon réseau pour comprendre le marché.'"
+        },
+        // Slide 5: Ecosysteme
+        {
+            q: "Donneriez-vous un client à votre 'concurrent' ?",
+            r1: "Le Protecteur : 'Jamais ! C'est mon client.'",
+            r2: "Le Stratège : 'Oui, si je ne suis pas le mieux placé, pour gagner sa confiance.'",
+        },
+        // Slide 6: Domino
+        {
+            q: "Qui est le meilleur commercial pour un Architecte ?",
+            r1: "Le Classique : 'Lui-même.'",
+            r2: "Le Popey : 'L'Agent Immobilier qui vend le bien à rénover.'"
+        },
+        // Slide 7: Générateur
+        {
+            q: "Votre réseau est-il une simple liste ou une équipe ?",
+            r1: "Le Solitaire : 'Juste des noms dans mon téléphone.'",
+            r2: "Le Stratège : 'Une équipe structurée par expertises.'"
+        },
+        // Slide 8: Match du Jour
+        {
+            q: "Combien de temps faut-il pour créer une vraie relation d'affaires ?",
+            r1: "Le Speed-Dater : '5 minutes, je distribue mes cartes à tout le monde.'",
+            r2: "L'Expert : 'Il faut du temps pour bâtir la confiance.'"
+        },
+        // Slide 9: Marché
+        {
+            q: "Que faire quand on est bloqué ?",
+            r1: "L'Isolé : 'J'attends que ça passe.'",
+            r2: "Le Communautaire : 'Je demande à la tribu.'"
+        },
+        // Slide 10: Réputation
+        {
+            q: "Combien vaut votre parole ?",
+            r1: "L'Opportuniste : 'Peu importe, tant que je vends.'",
+            r2: "L'Honorable : 'C'est mon seul actif durable.'"
+        },
+        // Slide 11: Objectifs
+        {
+            q: "Le ROI d'un réseau, c'est quoi ?",
+            r1: "Le Sceptique : 'Des déjeuners sympas.'",
+            r2: "Le Business : 'Du Chiffre d'Affaires additionnel net.'"
+        },
+        // Slide 12: Offre (New)
+        {
+            q: "Combien coûte l'adhésion ?",
+            r1: "Le Comptable : 'C'est une dépense.'",
+            r2: "L'Investisseur : 'C'est un placement à haut rendement.'"
+        },
+        // Slide 13: Vision
+        {
+            q: "Dax : Ville dortoir ou Hub Business ?",
+            r1: "Le Résigné : 'C'est calme...'",
+            r2: "L'Acteur : 'C'est à nous de faire le bruit.'"
+        },
+        // Slide 14: Contact
+        {
+            q: "Et maintenant ?",
+            r1: "Le Passif : 'Je vais réfléchir.'",
+            r2: "L'Actif : 'On signe où ?'"
+        }
+    ];
+
+    function toggleChallenge(forceState) {
+        const card = document.getElementById('challengeCard');
+        const btn = document.getElementById('btn-challenge');
+        
+        // Also toggle blur on the content
+        const currentSlide = slides[currentSlideIndex];
+        const content = currentSlide.querySelector('.content-area');
+
+        const isActive = card.classList.contains('active');
+        const newState = forceState !== undefined ? forceState : !isActive;
+        
+        if (newState) {
+            // Show Challenge -> Add Blur
+            card.classList.add('active');
+            btn.classList.add('active');
+            if (content && !currentSlide.classList.contains('hide-all-content')) {
+                content.classList.add('gamemaster-blur');
+                content.classList.remove('gamemaster-revealed');
+            }
+        } else {
+            // Hide Challenge -> Remove Blur
+            card.classList.remove('active');
+            btn.classList.remove('active');
+            if (content) {
+                content.classList.remove('gamemaster-blur');
+                content.classList.add('gamemaster-revealed');
+            }
+            
+            // Special Reveal for Slides 2 & 3 & 4
+            if (currentSlide.classList.contains('hide-all-content')) {
+                currentSlide.classList.add('revealed');
+                
+                // AUTO-START STORY if Slide 4
+                if (currentSlide.id === 'slide-story') {
+                    setTimeout(() => {
+                        revealStory();
+                    }, 500); // Small delay after reveal
+                }
+            }
+        }
+    }
+
+    function toggleReveal() {
+        const currentSlide = slides[currentSlideIndex];
+        const content = currentSlide.querySelector('.content-area');
+        
+        if (isRevealed) {
+            content.classList.add('gamemaster-blur');
+            content.classList.remove('gamemaster-revealed');
+            isRevealed = false;
+        } else {
+            content.classList.remove('gamemaster-blur');
+            content.classList.add('gamemaster-revealed');
+            isRevealed = true;
+        }
+    }
+
+    function updateChallengeCard(index) {
+        const challenge = slideChallenges[index] || slideChallenges[0];
+        document.getElementById('challengeQuestion').innerText = challenge.q;
+        
+        // Helper to parse "Role : Quote" format
+        const updateRole = (text, descId) => {
+            if (text.includes(" : ")) {
+                const parts = text.split(" : ");
+                // Only update description with the quote, keep title static (Sceptique/Visionnaire)
+                document.getElementById(descId).innerText = parts[1].replace(/^'|'$/g, ''); 
+            } else {
+                document.getElementById(descId).innerText = text;
+            }
+        };
+
+        updateRole(challenge.r1, 'role1Desc');
+        updateRole(challenge.r2, 'role2Desc');
+    }
+
+    // Roulette Logic - TRUQUÉE POUR LE SHOW (Uniquement des métiers avec Power Couples)
+    const rouletteJobs = [
+        "Agent Immobilier", // Match avec Notaire, Courtier
+        "Architecte",       // Match avec Agent Immo
+        "Avocat Affaires",  // Match avec Comptable
+        "Coach Sportif",    // Match avec Nutritionniste
+        "Comptable",        // Match avec Avocat, Banquier
+        "Fleuriste",        // Match avec Wedding Planner
+        "Notaire",          // Match avec Agent Immo
+        "Nutritionniste",   // Match avec Coach Sportif
+        "Paysagiste",       // Match avec Agent Immo
+        "Photographe",      // Match avec Community Manager
+        "Restaurateur",     // Match avec Caviste
+        "Traiteur",         // Match avec Wedding Planner
+        "Webdesigner",      // Match avec SEO, Copywriter
+        "Wedding Planner"   // Match avec Fleuriste, Traiteur
+    ];
+    let selectedRouletteJob = "";
+
+    function initRoulette() {
+        const strip = document.getElementById('rouletteStrip');
+        if (!strip) return;
+        
+        // Create a long strip: 3 sets of jobs to allow scrolling
+        const fullList = [...rouletteJobs, ...rouletteJobs, ...rouletteJobs];
+        strip.innerHTML = fullList.map(job => `<div class="roulette-item">${job}</div>`).join('');
+    }
+
+    // Call init
+    initRoulette();
+
+    function spinRealRoulette() {
+        const strip = document.getElementById('rouletteStrip');
+        const lever = document.querySelector('.roulette-lever');
+        const resultBox = document.getElementById('rouletteResult');
+        const resultText = document.getElementById('resultJobText');
+        
+        // Reset
+        resultBox.classList.remove('visible');
+        strip.style.transition = 'none';
+        strip.style.transform = 'translateY(0)';
+        
+        // Animate Lever
+        lever.classList.add('pulled');
+        setTimeout(() => lever.classList.remove('pulled'), 500);
+
+        // Pick random winner
+        const randomIndex = Math.floor(Math.random() * rouletteJobs.length);
+        selectedRouletteJob = rouletteJobs[randomIndex];
+        
+        // Calculate scroll position
+        // Item height is 120px. 
+        // We want to land on the 2nd set (index + length) to ensure we scroll enough
+        const targetIndex = randomIndex + rouletteJobs.length; 
+        const scrollY = targetIndex * 120;
+        
+        // Force reflow
+        strip.offsetHeight;
+
+        // Spin!
+        strip.style.transition = 'transform 4s cubic-bezier(0.13, 0.99, 0.29, 1.01)';
+        strip.style.transform = `translateY(-${scrollY}px)`;
+
+        // Show result after spin
+        setTimeout(() => {
+            resultText.innerText = selectedRouletteJob;
+            resultBox.classList.add('visible');
+            
+            // Confetti for the winner
+            if (window.confetti) {
+                confetti({
+                    particleCount: 100,
+                    spread: 70,
+                    origin: { y: 0.6 },
+                    colors: ['#ffffff', '#84cc16'] // White and Green
+                });
+            }
+        }, 4000);
+    }
+    
+    function useRouletteResult() {
+        // Close overlay
+        closeRoulette();
+        
+        // Navigate to Synergy Slide (Index 6, ID slide-synergy)
+        // Find index of slide-synergy
+        const synergySlideIndex = Array.from(slides).findIndex(s => s.id === 'slide-synergy');
+        if (synergySlideIndex !== -1) {
+            showSlide(synergySlideIndex);
+            
+            // Force close challenge immediately after slide transition logic triggers it
+            setTimeout(() => {
+                toggleChallenge(false);
+            }, 100);
+
+            // Auto-fill input
+            setTimeout(() => {
+                const input = document.getElementById('synergyInput');
+                if (input) {
+                    input.value = selectedRouletteJob;
+                    // Trigger synergy generation
+                    generateSynergies();
+                }
+            }, 1000); // Wait for slide transition
+        }
+    }
+
+    // Story Reveal Logic
+    let storyStep = 0;
+    
+    // Step 1: Reveal button AFTER strikes
+    function revealStory() {
+        if (storyStep === 0) {
+            // Strike through problems sequentially
+            const probs = document.querySelectorAll('.problem-text');
+            const btn = document.getElementById('revealBtn');
+            
+            if (probs.length >= 3) {
+                setTimeout(() => probs[0].classList.add('strike'), 0);
+                setTimeout(() => probs[1].classList.add('strike'), 400);
+                setTimeout(() => probs[2].classList.add('strike'), 800);
+                
+                // Show button ONLY after strikes are done
+                setTimeout(() => {
+                    if (btn) {
+                        btn.style.opacity = '1';
+                        btn.style.pointerEvents = 'all';
+                    }
+                }, 1200);
+            }
+            storyStep++;
+        }
+    }
+
+    // Step 2: Click button to show reality
+    function revealStoryPhase2() {
+        // Fade out myths
+        const myths = document.getElementById('story-myths');
+        if (myths) {
+            myths.style.opacity = '0';
+            myths.style.transform = 'translateY(-20px) translateY(-50%)'; // Keep vertical centering logic
+            
+            setTimeout(() => {
+                myths.style.display = 'none';
+                
+                // Fade in reality
+                const reality = document.getElementById('story-reality');
+                if (reality) {
+                    reality.style.display = 'block';
+                    reality.style.opacity = '0'; 
+                    void reality.offsetWidth; // Force reflow
+                    reality.style.opacity = '1';
+                    reality.style.transform = 'translateY(0)';
+                    reality.style.pointerEvents = 'all';
+                }
+            }, 500);
+        }
+    }
+    
+    function resetStory() {
+        const probs = document.querySelectorAll('.problem-text');
+        probs.forEach(p => p.classList.remove('strike'));
+        
+        const btn = document.getElementById('revealBtn');
+        if (btn) {
+            btn.style.opacity = '0';
+            btn.style.pointerEvents = 'none';
+        }
+        
+        // Reset Views
+        const myths = document.getElementById('story-myths');
+        const reality = document.getElementById('story-reality');
+        
+        if (myths && reality) {
+            myths.style.display = 'block';
+            myths.style.opacity = '1';
+            myths.style.transform = 'translateY(-50%)'; // Reset to centered
+            
+            reality.style.display = 'none';
+            reality.style.opacity = '0';
+            reality.style.transform = 'translateY(20px)';
+            reality.style.pointerEvents = 'none';
+        }
+        
+        storyStep = 0;
+    }
+
+    function spinRoulette() {
+        // Open the REAL roulette overlay now
+        const overlay = document.getElementById('rouletteOverlay');
+        overlay.classList.add('active');
+        
+        const modeSeats = document.getElementById('roulette-mode-seats');
+        const modeJobs = document.getElementById('roulette-mode-jobs');
+        
+        // Determine context: Are we on the Synergy Slide?
+        // slide-synergy is index 6 usually, but let's check ID
+        const currentSlide = slides[currentSlideIndex];
+        const isSynergySlide = currentSlide.id === 'slide-synergy';
+
+        if (isSynergySlide) {
+            // MODE JOBS
+            modeSeats.style.display = 'none';
+            modeJobs.style.display = 'flex';
+            
+            // Reset state
+            document.getElementById('rouletteResult').classList.remove('visible');
+            document.getElementById('rouletteStrip').style.transition = 'none';
+            document.getElementById('rouletteStrip').style.transform = 'translateY(0)';
+        } else {
+            // MODE SEATS
+            modeJobs.style.display = 'none';
+            modeSeats.style.display = 'flex';
+            
+            // Launch Number Animation
+            const seat1 = document.getElementById('seat1');
+            const seat2 = document.getElementById('seat2');
+            
+            let count = 0;
+            const interval = setInterval(() => {
+                seat1.innerText = Math.floor(Math.random() * 20) + 1;
+                seat2.innerText = Math.floor(Math.random() * 20) + 1;
+                count++;
+                if (count > 20) {
+                    clearInterval(interval);
+                    let n1 = Math.floor(Math.random() * 20) + 1;
+                    let n2 = Math.floor(Math.random() * 20) + 1;
+                    while (n1 === n2) {
+                        n2 = Math.floor(Math.random() * 20) + 1;
+                    }
+                    seat1.innerText = n1;
+                    seat2.innerText = n2;
+                }
+            }, 100);
+        }
+    }
+
+    function closeRoulette() {
+        document.getElementById('rouletteOverlay').classList.remove('active');
+    }
+
+    function startTimer() {
+        const display = document.getElementById('timerDisplay');
+        if (timerInterval) {
+            clearInterval(timerInterval);
+            timerInterval = null;
+            display.innerText = "05:00";
+            return;
+        }
+        
+        let timeLeft = 300; // 5 minutes
+        
+        timerInterval = setInterval(() => {
+            const minutes = Math.floor(timeLeft / 60);
+            const seconds = timeLeft % 60;
+            display.innerText = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+            
+            if (timeLeft <= 0) {
+                clearInterval(timerInterval);
+                timerInterval = null;
+                alert("Temps écoulé !");
+            }
+            timeLeft--;
+        }, 1000);
+    }
+
+    function showSlide(index) {
+        if (connectionAnimTimeout) {
+            clearTimeout(connectionAnimTimeout);
+            connectionAnimTimeout = null;
+        }
+
+        if (index < 0) index = 0;
+        if (index >= slides.length) index = slides.length - 1;
+
+        // Reset animations by removing/adding active class properly
+        slides[currentSlideIndex].classList.remove('active');
+        
+        // Reset story if we leave the slide
+        if (slides[currentSlideIndex].id === 'slide-story') {
+            resetStory();
+        }
+        
+        // Hide fragments in the previous slide if moving to a new one (optional reset)
+        // But more importantly, if we are moving back, we might want to reset the current slide's fragments
+        // For simplicity, let's just reset fragments when leaving a slide.
+        const prevFragments = slides[currentSlideIndex].querySelectorAll('.fragment');
+        prevFragments.forEach(f => f.classList.remove('visible'));
+
+        currentSlideIndex = index;
+        const newSlide = slides[currentSlideIndex];
+        
+        newSlide.classList.add('active');
+
+        // Update Global Footer Info
+        const footerSource = newSlide.querySelector('.footer-info');
+        const globalFooter = document.getElementById('globalFooterInfo');
+        if (footerSource && globalFooter) {
+            globalFooter.innerHTML = footerSource.innerHTML;
+        }
+        
+        // Reset specific slide states
+        const challengeCard = document.getElementById('challengeCard');
+        challengeCard.classList.remove('centered-challenge');
+        newSlide.classList.remove('hide-all-content');
+        newSlide.classList.remove('revealed');
+
+        // Special Logic for Slide 2 (Index 1) to Slide 12 (Index 11)
+        if (currentSlideIndex >= 1 && currentSlideIndex <= 11) {
+            newSlide.classList.add('hide-all-content');
+            challengeCard.classList.add('centered-challenge');
+            updateChallengeCard(currentSlideIndex);
+            
+            // SPECIAL CASE: SLIDE 4 (Index 3) - Story Slide
+            // We want to trigger the "strikes" animation immediately when the slide loads (after challenge)
+            // BUT wait, the challenge hides content.
+            // So: Challenge shows -> User clicks Close -> Content Reveals -> Animation Starts
+            
+            toggleChallenge(true); 
+        } else {
+            // Game Master: Always hide content on new slide (standard blur)
+            const content = newSlide.querySelector('.content-area');
+            if (content) {
+                // Just update challenge card but don't show it or blur content yet
+                updateChallengeCard(currentSlideIndex);
+                toggleChallenge(false); // Ensure challenge hidden and content clear
+            }
+        }
+        
+        // Re-trigger CSS animations for internal elements
+        const animatedElements = newSlide.querySelectorAll('.animate-up');
+        animatedElements.forEach(el => {
+            el.style.animation = 'none';
+            el.offsetHeight; /* trigger reflow */
+            el.style.animation = null; 
+        });
+
+        // Update stats bars if on slide 11 (index 10)
+        if (currentSlideIndex === 10) { 
+            setTimeout(() => {
+                const bars = newSlide.querySelectorAll('.stat-bar-fill');
+                bars.forEach(bar => {
+                    bar.style.width = bar.getAttribute('data-width');
+                });
+            }, 300);
+        } else {
+             // Reset stats bars
+            const allBars = document.querySelectorAll('.stat-bar-fill');
+            allBars.forEach(bar => {
+                bar.style.width = '0';
+            });
+        }
+
+        updateProgress();
+    }
+
+    function animateConnections() {
+        const slide = document.getElementById('ecosystem-slide');
+        const svg = document.getElementById('connection-svg');
+        const labelsContainer = document.getElementById('connection-labels');
+        
+        const cards = {
+            habitat: document.getElementById('card-habitat'),
+            digital: document.getElementById('card-digital'),
+            sante: document.getElementById('card-sante'),
+            conseil: document.getElementById('card-conseil'),
+            retail: document.getElementById('card-retail')
+        };
+        
+        // Define scenario (source -> target + label)
+        const scenarios = [
+            { source: 'habitat', target: 'conseil', label: 'Optimisation Fiscale' },
+            { source: 'digital', target: 'retail', label: 'Click & Collect' },
+            { source: 'sante', target: 'habitat', label: 'Normes PMR' },
+            { source: 'conseil', target: 'digital', label: 'Audit RGPD' }
+        ];
+        
+        // Reset
+        svg.innerHTML = '';
+        labelsContainer.innerHTML = '';
+        Object.values(cards).forEach(c => {
+            c.classList.remove('connected');
+            c.classList.remove('dimmed');
+        });
+        
+        const getCenter = (el) => {
+            return {
+                x: el.offsetLeft + el.offsetWidth / 2,
+                y: el.offsetTop + el.offsetHeight / 2
+            };
+        };
+
+        // Execute scenario step by step
+        let step = 0;
+        
+        function runStep() {
+            if (step >= scenarios.length) {
+                // End of animation loop, reset to clean state after a pause
+                connectionAnimTimeout = setTimeout(() => {
+                    Object.values(cards).forEach(c => {
+                        c.classList.remove('connected');
+                        c.classList.remove('dimmed');
+                    });
+                    svg.innerHTML = '';
+                    labelsContainer.innerHTML = '';
+                }, 2000);
+                return;
+            }
+
+            const { source, target, label } = scenarios[step];
+            const sourceCard = cards[source];
+            const targetCard = cards[target];
+
+            // 1. Dim all others
+            Object.values(cards).forEach(c => {
+                if (c !== sourceCard && c !== targetCard) {
+                    c.classList.add('dimmed');
+                    c.classList.remove('connected');
+                } else {
+                    c.classList.remove('dimmed');
+                    c.classList.add('connected');
+                }
+            });
+
+            // 2. Draw Connection
+            const p1 = getCenter(sourceCard);
+            const p2 = getCenter(targetCard);
+            
+            // Clear previous lines
+            svg.innerHTML = '';
+            labelsContainer.innerHTML = '';
+
+            // Curved path if cards are far apart (simple arc)
+            // But they are in a row, so straight line or arc
+            // Let's use a Quadratic Bezier curve to make it look like a bridge
+            const midX = (p1.x + p2.x) / 2;
+            const midY = (p1.y + p2.y) / 2 - 60; // Arc up
+
+            const pathData = `M ${p1.x} ${p1.y} Q ${midX} ${midY} ${p2.x} ${p2.y}`;
+            
+            const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+            path.setAttribute('d', pathData);
+            path.classList.add('connection-line');
+            path.style.fill = 'none';
+            // Animate stroke
+            const length = 500; // Approx
+            path.style.strokeDasharray = length;
+            path.style.strokeDashoffset = length;
+            path.style.animation = `dash 0.6s ease-out forwards`;
+            
+            svg.appendChild(path);
+
+            // 3. Show Label
+            const labelEl = document.createElement('div');
+            labelEl.classList.add('connection-label');
+            labelEl.textContent = label;
+            labelEl.style.left = `${midX}px`;
+            labelEl.style.top = `${midY}px`;
+            labelEl.style.animation = `fadeInUp 0.4s ease-out forwards 0.3s`; // Delay slightly
+            
+            labelsContainer.appendChild(labelEl);
+
+            // Next step
+            step++;
+            connectionAnimTimeout = setTimeout(runStep, 2500); // 2.5s per connection
+        }
+
+        runStep();
+    }
+
+    // Add keyframes dynamically
+    const styleSheet = document.createElement("style");
+    styleSheet.innerText = `
+        @keyframes dash {
+            from { stroke-dashoffset: 100; }
+            to { stroke-dashoffset: 0; }
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+    `;
+    document.head.appendChild(styleSheet);
+
+    function nextSlide() {
+        // Check for hidden fragments in the current slide
+        const currentSlide = slides[currentSlideIndex];
+        const allFragments = Array.from(currentSlide.querySelectorAll('.fragment'));
+        const hiddenFragments = allFragments.filter(el => !el.classList.contains('visible'));
+        
+        if (hiddenFragments.length > 0) {
+            // Reveal the next fragment
+            const nextFrag = hiddenFragments[0];
+            nextFrag.classList.add('visible');
+            
+            // Special trigger for ecosystem animation
+            if (nextFrag.id === 'trigger-connection-anim') {
+                animateConnections();
+            }
+        } else {
+            // No more fragments, go to next slide
+            showSlide(currentSlideIndex + 1);
+        }
+    }
+
+    function prevSlide() {
+        // Check for visible fragments in the current slide
+        const currentSlide = slides[currentSlideIndex];
+        const allFragments = Array.from(currentSlide.querySelectorAll('.fragment'));
+        const visibleFragments = allFragments.filter(el => el.classList.contains('visible'));
+        
+        if (visibleFragments.length > 0) {
+            // Hide the last visible fragment
+            visibleFragments[visibleFragments.length - 1].classList.remove('visible');
+        } else {
+            // No more visible fragments, go to previous slide
+            showSlide(currentSlideIndex - 1);
+        }
+    }
+
+    function updateProgress() {
+        const progress = ((currentSlideIndex + 1) / slides.length) * 100;
+        progressBar.style.width = `${progress}%`;
+    }
+
+    function toggleFullScreen() {
+        if (!document.fullscreenElement) {
+            document.documentElement.requestFullscreen().catch(err => {
+                console.log(`Error attempting to enable full-screen mode: ${err.message}`);
+            });
+        } else {
+            if (document.exitFullscreen) {
+                document.exitFullscreen();
+            }
+        }
+    }
+
+    // Domino Logic
+    const dominoTotals = {
+        'scenario-habitat': '100 000 €',
+        'scenario-sante': '2 060 €',
+        'scenario-digital': '6 000 €',
+        'scenario-conseil': '16 000 €',
+        'scenario-retail': '750 €'
+    };
+
+    function selectDominoScenario(scenarioId, btn) {
+        // 1. Sidebar Active State
+        document.querySelectorAll('.domino-sidebar-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+
+        // 2. Show Scenario
+        document.querySelectorAll('.domino-scenario').forEach(s => {
+            s.classList.remove('active');
+            // Reset cards inside
+            s.querySelectorAll('.domino-card').forEach(c => c.classList.remove('active'));
+        });
+        document.getElementById(scenarioId).classList.add('active');
+
+        // 3. Reset Total
+        const totalDisplay = document.getElementById('totalDisplay');
+        totalDisplay.classList.remove('visible');
+        document.getElementById('totalAmount').innerText = '0 €';
+    }
+
+    function triggerDominoEffect() {
+        // Find active scenario
+        const activeScenario = document.querySelector('.domino-scenario.active');
+        if (!activeScenario) return;
+
+        const cards = activeScenario.querySelectorAll('.domino-card');
+        const totalDisplay = document.getElementById('totalDisplay');
+        const totalAmountSpan = document.getElementById('totalAmount');
+        const scenarioId = activeScenario.id;
+
+        // Reset
+        cards.forEach(c => c.classList.remove('active'));
+        totalDisplay.classList.remove('visible');
+        
+        // Sequence
+        let delay = 0;
+        cards.forEach((card, index) => {
+            setTimeout(() => {
+                card.classList.add('active');
+            }, delay);
+            delay += 600; // 0.6s per step
+        });
+        
+        // Show Total
+        setTimeout(() => {
+            totalAmountSpan.innerText = dominoTotals[scenarioId] || '...';
+            totalDisplay.classList.add('visible');
+        }, delay);
+    }
+
+    // Keyboard Navigation
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'ArrowRight' || e.key === 'Space') {
+            nextSlide();
+        } else if (e.key === 'ArrowLeft') {
+            prevSlide();
+        } else if (e.key === 'f') {
+            toggleFullScreen();
+        }
+    });
+
+    function switchSphere(sphereId, btn) {
+        // Remove active class from all tabs
+        document.querySelectorAll('.sphere-tab-btn').forEach(b => b.classList.remove('active'));
+        // Add active class to clicked tab
+        btn.classList.add('active');
+
+        // Hide all contents
+        document.querySelectorAll('.sphere-tab-content').forEach(c => c.classList.remove('active'));
+        // Show selected content
+        document.getElementById(sphereId).classList.add('active');
+    }
+
+// Initialize first slide challenge
+        updateChallengeCard(0);
+        setTimeout(() => {
+            toggleChallenge(false); // Ensure challenge hidden and content clear
+        }, 100);
+
+    // --- SYNERGY GENERATOR LOGIC ---
+    const synergyInput = document.getElementById('synergyInput');
+    const synergySuggestions = document.getElementById('synergySuggestions');
+    const synergyResults = document.getElementById('synergyResults');
+    let selectedJob = null;
+
+    // Helper: Guess sphere from keywords
+    function guessSphere(name) {
+        const lowerName = normalizeText(name);
+        if (lowerName.match(/maison|batiment|travaux|jardin|immo|deco|archi|maitre/)) return 'habitat';
+        if (lowerName.match(/soin|medecin|therapeute|sante|bien-etre|coach|psy|osteo/)) return 'bien-etre';
+        if (lowerName.match(/vente|boutique|magasin|resto|bar|commerce|vin|traiteur/)) return 'commerce';
+        if (lowerName.match(/conseil|consultant|audit|expert|droit|loi|avocat|notaire/)) return 'conseil';
+        if (lowerName.match(/digital|web|marketing|com|gestion|business|photo|video/)) return 'business';
+        return 'business'; // Default
+    }
+
+    // Helper: Create a guest job object
+    function createGuestJob(name) {
+        return {
+            id: 'guest_' + Math.random().toString(36).substr(2, 9),
+            label: name.charAt(0).toUpperCase() + name.slice(1),
+            sphere: guessSphere(name),
+            tags: [] // No tags for guest jobs, rely on sphere logic
+        };
+    }
+
+    if (synergyInput) {
+        synergyInput.addEventListener('input', (e) => {
+            const val = e.target.value;
+            if (val.length < 2) {
+                synergySuggestions.style.display = 'none';
+                return;
+            }
+
+            const matches = jobsDatabase.filter(j => 
+                normalizeText(j.label).includes(normalizeText(val))
+            ).slice(0, 5);
+
+            if (matches.length > 0) {
+                synergySuggestions.innerHTML = matches.map(j => 
+                    `<div class="synergy-suggestion-item" onclick="selectSuggestion('${j.id}')">${j.label}</div>`
+                ).join('');
+                synergySuggestions.style.display = 'block';
+            } else {
+                synergySuggestions.style.display = 'none';
+            }
+        });
+
+        // Close suggestions on click outside
+        document.addEventListener('click', (e) => {
+            if (!synergyInput.contains(e.target) && !synergySuggestions.contains(e.target)) {
+                synergySuggestions.style.display = 'none';
+            }
+        });
+        
+        // Handle Enter key
+        synergyInput.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') {
+                // If suggestions are visible and one is exact match or first one, take it?
+                // Or just try to find based on text
+                synergySuggestions.style.display = 'none';
+                generateSynergies();
+            }
+        });
+    }
+
+    function selectSuggestion(id) {
+        const job = jobsDatabase.find(j => j.id === id);
+        if (job) {
+            synergyInput.value = job.label;
+            selectedJob = job;
+            synergySuggestions.style.display = 'none';
+            generateSynergies();
+        }
+    }
+
+    function generateSynergies() {
+        // If no selected job via suggestion, try to find by text
+        if (!selectedJob || normalizeText(selectedJob.label) !== normalizeText(synergyInput.value)) {
+            selectedJob = findJob(synergyInput.value);
+        }
+
+        if (!selectedJob) {
+            // Handle unknown job gracefully
+            const inputName = synergyInput.value.trim();
+            if (inputName.length < 2) {
+                alert("Veuillez entrer un nom de métier.");
+                return;
+            }
+            selectedJob = createGuestJob(inputName);
+        }
+
+        // Clear Results
+        synergyResults.innerHTML = '';
+        
+        // Show Loading (Fake)
+        synergyResults.innerHTML = `<div style="width:100%; text-align:center; padding:40px;">
+            <i class="fas fa-circle-notch fa-spin" style="font-size:40px; color:var(--primary);"></i>
+            <p style="margin-top:10px;">Analyse des compatibilités...</p>
+        </div>`;
+
+        // Process
+        setTimeout(() => {
+            const synergies = getSynergies(selectedJob);
+            synergyResults.innerHTML = '';
+
+            if (synergies.length === 0) {
+                synergyResults.innerHTML = `<div style="width:100%; text-align:center;">Aucune synergie trouvée (ce qui est étrange).</div>`;
+                return;
+            }
+            
+            // Check for Super Match to trigger Confetti
+            if (synergies.some(j => j.score >= 80) && window.confetti) {
+                confetti({
+                    particleCount: 150,
+                    spread: 70,
+                    origin: { y: 0.6 },
+                    colors: ['#84cc16', '#3b82f6', '#fbbf24']
+                });
+            }
+
+            // Carousel Buttons Logic
+            const btnPrev = document.getElementById('btnPrevResult');
+            const btnNext = document.getElementById('btnNextResult');
+            
+            if (synergies.length > 4) { // More than visible area
+                btnNext.classList.add('visible');
+                btnPrev.classList.remove('visible');
+                
+                synergyResults.onscroll = () => {
+                    if (synergyResults.scrollLeft > 20) {
+                        btnPrev.classList.add('visible');
+                    } else {
+                        btnPrev.classList.remove('visible');
+                    }
+                    
+                    if (synergyResults.scrollLeft >= (synergyResults.scrollWidth - synergyResults.clientWidth - 20)) {
+                        btnNext.classList.remove('visible');
+                    } else {
+                        btnNext.classList.add('visible');
+                    }
+                };
+            } else {
+                btnNext.classList.remove('visible');
+                btnPrev.classList.remove('visible');
+                synergyResults.onscroll = null;
+            }
+
+            synergies.forEach((job, index) => {
+                const delay = index * 0.05; // Staggered
+                const card = document.createElement('div');
+
+                // Super Match Logic
+                const isSuperMatch = job.score >= 80;
+                const superMatchClass = isSuperMatch ? 'super-match' : '';
+                const superMatchBadge = isSuperMatch ? '<div class="super-match-badge"><i class="fas fa-fire"></i> Top Synergie</div>' : '';
+
+                card.className = `synergy-card ${superMatchClass}`;
+                card.style.animationDelay = `${delay}s`;
+                card.onclick = function() { this.classList.toggle('flipped'); };
+                
+                // Sphere Color mapping
+                let sphereColor = '#94a3b8';
+                if (job.sphere === 'habitat') sphereColor = '#84cc16'; // primary
+                if (job.sphere === 'business') sphereColor = '#3b82f6'; // secondary
+                if (job.sphere === 'bien-etre') sphereColor = '#10b981';
+                if (job.sphere === 'commerce') sphereColor = '#ec4899';
+                if (job.sphere === 'conseil') sphereColor = '#8b5cf6';
+
+                // Format Score
+                const scoreDisplay = Math.round(Math.min(job.score, 100)) + '%';
+                
+                // Get Synergy Description
+                const synergyInfo = getSynergyDescription(selectedJob, job);
+
+                card.innerHTML = `
+                    ${superMatchBadge}
+                    <div class="synergy-card-inner">
+                        <div class="synergy-card-front">
+                            <div class="synergy-header-bg" style="background:${sphereColor};"></div>
+                            <div class="synergy-avatar" style="border-color:${sphereColor}; color:${sphereColor};">
+                                <i class="fas fa-user"></i>
+                            </div>
+                            <div class="synergy-body">
+                                <div class="synergy-job-title">${job.label}</div>
+                                <div class="synergy-match-badge" style="background:${sphereColor}; border:none;">${scoreDisplay} Match</div>
+                                <div class="synergy-tags">
+                                    ${job.sharedTags.map(t => `<span class="synergy-tag">${t}</span>`).join('')}
+                                    ${job.tags.slice(0, 2).filter(t => !job.sharedTags.includes(t)).map(t => `<span class="synergy-tag" style="opacity:0.6;">${t}</span>`).join('')}
+                                </div>
+                                <div class="synergy-details-hint">
+                                    <i class="fas fa-sync"></i> Détails
+                                </div>
+                            </div>
+                        </div>
+                        <div class="synergy-card-back">
+                            <div class="synergy-back-icon" style="color:${sphereColor}; background:rgba(0,0,0,0.05);">
+                                <i class="fas ${synergyInfo.icon}"></i>
+                            </div>
+                            <div style="font-size:24px; font-weight:900; text-transform:uppercase; margin-bottom:15px; color:var(--secondary); line-height:1.1;">${synergyInfo.name}</div>
+                            <div style="font-size:16px; line-height:1.6; color:var(--text-muted); padding:0 10px;">${synergyInfo.desc}</div>
+                            <div style="margin-top:auto; font-size:14px; color:var(--text-muted); opacity:0.6; display:flex; align-items:center; gap:5px;">
+                                <i class="fas fa-undo"></i> Retour
+                            </div>
+                        </div>
+                    </div>
+                `;
+                
+                synergyResults.appendChild(card);
+            });
+
+        }, 800); // Artificial delay for effect
+    }
+
+    function scrollResults(direction) {
+        const container = document.getElementById('synergyResults');
+        const scrollAmount = 300; // approx card width + gap
+        container.scrollBy({
+            left: direction * scrollAmount,
+            behavior: 'smooth'
+        });
+    }
+        // Generate QR Code
+    document.addEventListener('DOMContentLoaded', function() {
+        const qrContainer = document.getElementById('qrcode');
+        if (qrContainer && typeof QRCode !== 'undefined') {
+            // Clear previous if any
+            qrContainer.innerHTML = '';
+            new QRCode(qrContainer, {
+                text: "https://www.popey.academy/inscription/spheres",
+                width: 250,
+                height: 250,
+                colorDark : "#0f172a",
+                colorLight : "#ffffff",
+                correctLevel : QRCode.CorrectLevel.H
+            });
+        }
+    });
+</script>
+</body>
+</html>
